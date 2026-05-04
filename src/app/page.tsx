@@ -179,54 +179,100 @@ export default function Home() {
 
         {/* Pricing Section */}
         <section className="py-24 px-4 relative">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">Simple, transparent pricing</h2>
               <p className="text-xl text-gray-600 dark:text-gray-400">Join the network today. Try it risk-free.</p>
             </div>
 
-            <div className="glass-card p-8 lg:p-12 relative overflow-hidden border-2 border-brand-500/50 shadow-2xl">
-              <div className="absolute top-0 right-0 bg-brand-500 text-white text-sm font-bold px-4 py-1 rounded-bl-lg shadow-md">
-                50% Discounted Rate
-              </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-              <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
-                <div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Pro Membership</h3>
+              {/* Server Card */}
+              <div className="glass-card p-8 lg:p-10 relative overflow-hidden border-2 border-brand-500/50 shadow-2xl flex flex-col">
+                <div className="absolute top-0 right-0 bg-brand-500 text-white text-sm font-bold px-4 py-1 rounded-bl-lg shadow-md">
+                  50% Discounted Rate
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2"> Server Membership</h3>
                   <p className="text-gray-600 dark:text-gray-400 mb-6">Unlock full access to the shift network, unlimited messaging, and priority listings.</p>
-
                   <div className="flex items-baseline gap-2 mb-2">
                     <span className="text-5xl font-extrabold text-gray-900 dark:text-white">$9.99</span>
                     <span className="text-xl text-gray-500">/month</span>
                   </div>
                   <div className="text-sm text-gray-500 mb-6">or <span className="font-semibold text-gray-700 dark:text-gray-300">$99/year</span></div>
-
                   <ul className="space-y-3 mb-8">
                     <li className="flex items-center text-gray-700 dark:text-gray-300">
-                      <svg className="w-5 h-5 text-brand-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                      <strong>30-day free trial</strong> included
+                      <svg className="w-5 h-5 text-brand-500 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                      <strong>30-day free trial</strong>&nbsp;included
                     </li>
                     <li className="flex items-center text-gray-700 dark:text-gray-300">
-                      <svg className="w-5 h-5 text-brand-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                      Access to Geofenced local shift feed
+                      <svg className="w-5 h-5 text-brand-500 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                      Access to geofenced local shift feed
                     </li>
                     <li className="flex items-center text-gray-700 dark:text-gray-300">
-                      <svg className="w-5 h-5 text-brand-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                      <svg className="w-5 h-5 text-brand-500 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
                       Secure in-app messaging
+                    </li>
+                    <li className="flex items-center text-gray-700 dark:text-gray-300">
+                      <svg className="w-5 h-5 text-brand-500 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                      Post your resume and availability
                     </li>
                   </ul>
                 </div>
-
-                <div className="w-full lg:w-auto flex flex-col gap-4">
+                <div className="flex flex-col gap-3">
                   <button
                     onClick={() => setIsModalOpen(true)}
-                    className="w-full lg:w-64 bg-brand-500 hover:bg-brand-600 text-white px-8 py-4 rounded-xl text-lg font-bold transition-all hover-scale shadow-lg shadow-brand-500/30 text-center"
+                    className="w-full bg-brand-500 hover:bg-brand-600 text-white px-8 py-4 rounded-xl text-lg font-bold transition-all hover-scale shadow-lg shadow-brand-500/30 text-center"
                   >
                     Start Free Trial
                   </button>
                   <p className="text-xs text-center text-gray-500">Secure payment via Stripe</p>
                 </div>
               </div>
+
+              {/* Restaurant Card */}
+              <div className="glass-card p-8 lg:p-10 relative overflow-hidden border-2 border-gray-200 dark:border-gray-700 shadow-2xl flex flex-col">
+                <div className="absolute top-0 right-0 bg-gray-900 text-white text-sm font-bold px-4 py-1 rounded-bl-lg shadow-md">
+                  50% Discounted Price
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Restaurant Membership</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-6">Post open shifts, browse verified servers nearby, and keep your floor fully staffed — on demand.</p>
+                  <div className="flex items-baseline gap-2 mb-2">
+                    <span className="text-5xl font-extrabold text-gray-900 dark:text-white">$99</span>
+                    <span className="text-xl text-gray-500">/month</span>
+                  </div>
+                  <div className="text-sm text-gray-500 mb-6">or <span className="font-semibold text-gray-700 dark:text-gray-300">$999/year</span></div>
+                  <ul className="space-y-3 mb-8">
+                    <li className="flex items-center text-gray-700 dark:text-gray-300">
+                      <svg className="w-5 h-5 text-brand-500 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                      <strong>30-day free trial</strong>&nbsp;included
+                    </li>
+                    <li className="flex items-center text-gray-700 dark:text-gray-300">
+                      <svg className="w-5 h-5 text-brand-500 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                      Post unlimited shift openings
+                    </li>
+                    <li className="flex items-center text-gray-700 dark:text-gray-300">
+                      <svg className="w-5 h-5 text-brand-500 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                      Browse high-rated, verified servers
+                    </li>
+                    <li className="flex items-center text-gray-700 dark:text-gray-300">
+                      <svg className="w-5 h-5 text-brand-500 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                      Secure in-app messaging
+                    </li>
+                  </ul>
+                </div>
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="w-full bg-gray-900 hover:bg-gray-700 dark:bg-white dark:hover:bg-gray-100 dark:text-gray-900 text-white px-8 py-4 rounded-xl text-lg font-bold transition-all hover-scale shadow-lg text-center"
+                  >
+                    Start Free Trial
+                  </button>
+                  <p className="text-xs text-center text-gray-500">Secure payment via Stripe</p>
+                </div>
+              </div>
+
             </div>
           </div>
         </section>
