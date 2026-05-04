@@ -279,11 +279,14 @@ export default function Home() {
 
         {/* Contact Us Section */}
         <section className="py-24 bg-gray-50 dark:bg-gray-900/50 px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Contact Us</h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">We're here to help you keep your restaurant fully staffed.</p>
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Contact Us</h2>
+              <p className="text-lg text-gray-600 dark:text-gray-400">We're here to help you keep your restaurant fully staffed.</p>
+            </div>
 
-            <form className="glass-card p-8 text-left space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
+              <form className="glass-card p-8 text-left space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">First Name</label>
@@ -305,7 +308,21 @@ export default function Home() {
               <button type="button" className="w-full bg-brand-600 hover:bg-brand-700 text-white px-8 py-4 rounded-lg font-bold transition-all hover-scale shadow-lg">
                 Send Message
               </button>
-            </form>
+              </form>
+
+              {/* Image */}
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl min-h-[400px]">
+                <Image
+                  src="/servers_kitchen_pickup_v2.png"
+                  alt="Three diverse servers picking up food from the kitchen"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover object-top"
+                />
+              </div>
+
+            </div>
           </div>
         </section>
       </main>
