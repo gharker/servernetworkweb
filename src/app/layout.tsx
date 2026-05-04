@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GigNetwork - Reimagining the Gig Economy",
+  title: "serverNetwork - Reimagining Restaurant Staffing",
   description: "The network that works. Find gigs in your area or post a job to get help from qualified locals.",
 };
 
