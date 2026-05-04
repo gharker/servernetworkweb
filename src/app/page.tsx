@@ -52,9 +52,10 @@ export default function Home() {
         <section className="px-4 pb-12 max-w-7xl mx-auto -mt-8 relative z-10">
           <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-gray-800">
             <Image 
-              src="/restaurant_servers_banner.png" 
+              src="/restaurant_servers_banner_v2.png" 
               alt="Warm cozy local restaurant with servers" 
               fill
+              priority
               className="object-cover object-center"
             />
           </div>
