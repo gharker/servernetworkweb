@@ -10,7 +10,34 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       {/* Navigation */}
       <nav className="fixed w-full top-0 left-0 right-0 flex justify-between items-center p-6 lg:px-12 bg-white/90 dark:bg-gray-950/90 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800 z-50 transition-all">
-        <div className="text-2xl font-bold tracking-tight"><span className="text-black dark:text-white">server</span><span className="text-brand-500">Network</span></div>
+        <div className="flex items-center text-2xl font-bold tracking-tight cursor-pointer">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="mr-3"
+          >
+            {/* Cover / Platter (Orange) */}
+            <g className="stroke-brand-500">
+              <path d="M12 3V2" />
+              <path d="M4 10h16" />
+              <path d="M5 10a7 7 0 0 1 14 0" />
+            </g>
+            {/* Hand (Black in light mode, White in dark mode) */}
+            <g className="stroke-black dark:stroke-white">
+              <path d="m15.4 17.4 3.2-2.8a2 2 0 1 1 2.8 2.9l-3.6 3.3c-.7.8-1.7 1.2-2.8 1.2h-4c-1.1 0-2.1-.4-2.8-1.2l-1.302-1.464A1 1 0 0 0 6.151 19H5" />
+              <path d="M2 14h12a2 2 0 0 1 0 4h-2" />
+              <path d="M5 14v6a1 1 0 0 1-1 1H2" />
+            </g>
+          </svg>
+          <span className="text-black dark:text-white">server</span>
+          <span className="text-brand-500">Network</span>
+        </div>
         <div className="flex items-center space-x-3 sm:space-x-4">
           <button 
             onClick={() => setIsModalOpen(true)}
@@ -122,6 +149,81 @@ export default function Home() {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Photo Cards Section */}
+        <section className="py-16 px-4 bg-white dark:bg-gray-950">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+            {/* Card 1 — For Servers */}
+            <div className="rounded-3xl overflow-hidden shadow-2xl group relative flex flex-col">
+              <div className="relative h-72 sm:h-80 w-full overflow-hidden">
+                <Image
+                  src="/server_delivering_food_v2.png"
+                  alt="African American female server delivering food to a table"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/20 to-transparent" />
+                <h3 className="absolute bottom-4 left-6 text-2xl font-bold text-white flex items-center gap-2">
+                  <span>🍽️</span> For Servers
+                </h3>
+              </div>
+              <div className="bg-white dark:bg-gray-900 p-8 flex-1 space-y-6">
+                <div>
+                  <h4 className="text-base font-semibold text-gray-900 dark:text-white mb-3 pb-2 border-b border-gray-200 dark:border-gray-700 uppercase tracking-wider">The Problem</h4>
+                  <ul className="space-y-2 text-gray-600 dark:text-gray-400">
+                    <li className="flex items-start"><span className="mr-2 text-brand-500 mt-1">•</span>Want to pick up extra shifts but don't know who is hiring right now.</li>
+                    <li className="flex items-start"><span className="mr-2 text-brand-500 mt-1">•</span>Hard to find shifts in your immediate area on short notice.</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="text-base font-semibold text-gray-900 dark:text-white mb-3 pb-2 border-b border-gray-200 dark:border-gray-700 uppercase tracking-wider">Our Solution</h4>
+                  <ul className="space-y-2 text-gray-600 dark:text-gray-400">
+                    <li className="flex items-start"><span className="mr-2 text-brand-500 mt-1">✓</span><span><strong className="text-gray-800 dark:text-gray-200">You are your own boss.</strong> Pick up shifts when and where you want.</span></li>
+                    <li className="flex items-start"><span className="mr-2 text-brand-500 mt-1">✓</span>Fit work seamlessly into your schedule.</li>
+                    <li className="flex items-start"><span className="mr-2 text-brand-500 mt-1">✓</span>Support local businesses. Our app is geofenced to list only those needing help within a 60-mile radius.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 2 — For Restaurants */}
+            <div className="rounded-3xl overflow-hidden shadow-2xl group relative flex flex-col">
+              <div className="relative h-72 sm:h-80 w-full overflow-hidden">
+                <Image
+                  src="/restaurant_host_stand.png"
+                  alt="Female host standing at a restaurant check-in stand"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/20 to-transparent" />
+                <h3 className="absolute bottom-4 left-6 text-2xl font-bold text-white flex items-center gap-2">
+                  <span>🏪</span> For Restaurants
+                </h3>
+              </div>
+              <div className="bg-white dark:bg-gray-900 p-8 flex-1 space-y-6">
+                <div>
+                  <h4 className="text-base font-semibold text-gray-900 dark:text-white mb-3 pb-2 border-b border-gray-200 dark:border-gray-700 uppercase tracking-wider">The Problem</h4>
+                  <ul className="space-y-2 text-gray-600 dark:text-gray-400">
+                    <li className="flex items-start"><span className="mr-2 text-brand-500 mt-1">•</span>Someone called out sick and you need a server for the rush, stat.</li>
+                    <li className="flex items-start"><span className="mr-2 text-brand-500 mt-1">•</span>No easy way to connect with experienced individuals ready to step in.</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="text-base font-semibold text-gray-900 dark:text-white mb-3 pb-2 border-b border-gray-200 dark:border-gray-700 uppercase tracking-wider">Our Solution</h4>
+                  <ul className="space-y-2 text-gray-600 dark:text-gray-400">
+                    <li className="flex items-start"><span className="mr-2 text-brand-500 mt-1">✓</span>Get the staff you need, exactly when you need them.</li>
+                    <li className="flex items-start"><span className="mr-2 text-brand-500 mt-1">✓</span>Find high-rated, experienced servers nearby.</li>
+                    <li className="flex items-start"><span className="mr-2 text-brand-500 mt-1">✓</span>Connect instantly and keep your floor running smoothly.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
           </div>
         </section>
 
