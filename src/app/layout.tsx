@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "serverNetwork - Reimagining Restaurant Staffing",
-  description: "The network that works. Find gigs in your area or post a job to get help from qualified locals.",
+  description: "Whether you're a server looking to pick up extra shifts or a restaurant needing coverage for the dinner rush, we've got you covered."
 };
 
 export default function RootLayout({
