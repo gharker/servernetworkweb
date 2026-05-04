@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navigation */}
-      <nav className="flex justify-between items-center p-6 lg:px-12 glass z-10 sticky top-0">
+      <nav className="fixed w-full top-0 left-0 right-0 flex justify-between items-center p-6 lg:px-12 bg-white/90 dark:bg-gray-950/90 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800 z-50 transition-all">
         <div className="text-2xl font-bold tracking-tight"><span className="text-black dark:text-white">server</span><span className="text-brand-500">Network</span></div>
         <div className="flex items-center space-x-3 sm:space-x-4">
           <button 
@@ -27,9 +27,9 @@ export default function Home() {
         </div>
       </nav>
 
-      <main className="flex-grow">
+      <main className="flex-grow pt-24">
         {/* Hero Section */}
-        <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden flex flex-col items-center text-center px-4">
+        <section className="relative pt-8 pb-20 lg:pt-24 lg:pb-32 overflow-hidden flex flex-col items-center text-center px-4">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[500px] bg-brand-500/20 blur-[120px] rounded-full -z-10" />
           
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-6 max-w-4xl">
