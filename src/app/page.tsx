@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/nextjs";
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isSignedIn } = useAuth();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -39,18 +41,25 @@ export default function Home() {
           <span className="text-brand-500">Network</span>
         </div>
         <div className="flex items-center space-x-3 sm:space-x-4">
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="hidden sm:inline-block text-gray-600 dark:text-gray-300 hover:text-brand-500 font-medium transition-colors"
-          >
-            Sign In / Register
-          </button>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 sm:px-5 sm:py-2 rounded-full text-sm sm:text-base font-medium transition-all hover-scale shadow-lg shadow-brand-500/30"
-          >
-            Get Started
-          </button>
+          {!isSignedIn ? (
+            <>
+              <SignInButton mode="modal">
+                <button
+                  className="hidden sm:inline-block text-gray-600 dark:text-gray-300 hover:text-brand-500 font-medium transition-colors"
+                >
+                  Sign In / Register
+                </button>
+              </SignInButton>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 sm:px-5 sm:py-2 rounded-full text-sm sm:text-base font-medium transition-all hover-scale shadow-lg shadow-brand-500/30"
+              >
+                Get Started
+              </button>
+            </>
+          ) : (
+            <UserButton />
+          )}
         </div>
       </nav>
 
@@ -368,10 +377,12 @@ export default function Home() {
                 <input type="text" className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all" />
               </div>
 
-              <button type="button" className="w-full bg-brand-500 hover:bg-brand-600 text-white px-8 py-3 rounded-lg font-bold transition-all hover-scale shadow-lg shadow-brand-500/30 mt-4 flex items-center justify-center gap-2">
-                Continue with Clerk
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-              </button>
+              <SignUpButton mode="modal">
+                <button type="button" className="w-full bg-brand-500 hover:bg-brand-600 text-white px-8 py-3 rounded-lg font-bold transition-all hover-scale shadow-lg shadow-brand-500/30 mt-4 flex items-center justify-center gap-2">
+                  Continue with Clerk
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </button>
+              </SignUpButton>
             </form>
           </div>
         </div>
