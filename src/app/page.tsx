@@ -322,8 +322,8 @@ export default function Home() {
               {/* Image */}
               <div className="relative rounded-3xl overflow-hidden shadow-2xl min-h-[400px]">
                 <Image
-                  src="/servers_kitchen_pickup_v2.png"
-                  alt="Three diverse servers picking up food from the kitchen"
+                  src="/asian_female_server_coffee_shop.png"
+                  alt="Asian female server taking an order in a coffee shop"
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 50vw"
