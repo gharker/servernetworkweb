@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
+import { prisma } from "@/lib/prisma";
+import OnboardingModal from "@/components/OnboardingModal";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,11 +21,23 @@ export const metadata: Metadata = {
   description: "Whether you're a server looking to pick up extra shifts or a restaurant needing coverage for the dinner rush, we've got you covered."
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { userId } = await auth();
+  let needsProfile = false;
+
+  if (userId) {
+    const profile = await prisma.profile.findUnique({
+      where: { clerkId: userId },
+    });
+    if (!profile) {
+      needsProfile = true;
+    }
+  }
+
   return (
     <ClerkProvider>
       <html
@@ -30,7 +45,10 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       >
-        <body suppressHydrationWarning className="min-h-full flex flex-col">{children}</body>
+        <body suppressHydrationWarning className="min-h-full flex flex-col">
+          {children}
+          <OnboardingModal isOpen={needsProfile} />
+        </body>
       </html>
     </ClerkProvider>
   );

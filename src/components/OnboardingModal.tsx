@@ -1,0 +1,203 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
+import { createProfile } from "@/actions/profile";
+import { useRouter } from "next/navigation";
+
+export default function OnboardingModal({ isOpen }: { isOpen: boolean }) {
+  const { user } = useUser();
+  const router = useRouter();
+  
+  const [accountType, setAccountType] = useState<"SERVER" | "RESTAURANT" | null>(null);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [restaurantName, setRestaurantName] = useState("");
+  const [avatarBase64, setAvatarBase64] = useState("");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user?.primaryEmailAddress?.emailAddress && !email) {
+      setEmail(user.primaryEmailAddress.emailAddress);
+    }
+  }, [user, email]);
+
+  if (!isOpen) return null;
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAvatarFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarBase64(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!accountType) return;
+    if (!username) {
+      setError("Username is required");
+      return;
+    }
+    
+    setLoading(true);
+    setError("");
+    
+    try {
+      if (avatarFile && user) {
+        await user.setProfileImage({ file: avatarFile });
+      }
+
+      await createProfile({
+        accountType,
+        username,
+        email,
+        restaurantName,
+        avatarUrl: avatarBase64 || undefined,
+      });
+      // Refresh the page to dismiss the modal via layout state check
+      router.refresh();
+    } catch (err: any) {
+      setError(err.message || "Something went wrong");
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/80 backdrop-blur-sm transition-opacity">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 text-center">
+          Complete Your Profile
+        </h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 text-center font-medium">
+          This is required to create an account.
+        </p>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm text-center">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Account Type Selection */}
+          <div className="space-y-3">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Do you want to create a server account or a restaurant account?
+            </label>
+            <div className="flex gap-4 mt-2">
+              <label className="flex items-center gap-2 cursor-pointer bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 flex-1 justify-center hover:border-brand-500 transition-colors">
+                <input
+                  type="radio"
+                  name="accountType"
+                  value="SERVER"
+                  checked={accountType === "SERVER"}
+                  onChange={() => setAccountType("SERVER")}
+                  className="w-4 h-4 text-brand-500 border-gray-300 focus:ring-brand-500"
+                />
+                <span className="text-gray-900 dark:text-gray-100 font-medium">Server</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 flex-1 justify-center hover:border-brand-500 transition-colors">
+                <input
+                  type="radio"
+                  name="accountType"
+                  value="RESTAURANT"
+                  checked={accountType === "RESTAURANT"}
+                  onChange={() => setAccountType("RESTAURANT")}
+                  className="w-4 h-4 text-brand-500 border-gray-300 focus:ring-brand-500"
+                />
+                <span className="text-gray-900 dark:text-gray-100 font-medium">Restaurant</span>
+              </label>
+            </div>
+          </div>
+
+          {accountType && (
+            <div className="space-y-4 animate-in fade-in duration-300 pt-2 border-t border-gray-100 dark:border-gray-800">
+              {/* Username */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Username <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none transition-all"
+                  placeholder="e.g. johndoe"
+                />
+              </div>
+
+              {/* Restaurant Name (Only for Restaurant) */}
+              {accountType === "RESTAURANT" && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Restaurant Name
+                  </label>
+                  <input
+                    type="text"
+                    value={restaurantName}
+                    onChange={(e) => setRestaurantName(e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none transition-all"
+                    placeholder="e.g. The Local Diner"
+                  />
+                </div>
+              )}
+
+              {/* Email */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none transition-all"
+                  placeholder="john@example.com"
+                />
+              </div>
+
+              {/* Avatar Upload */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Avatar Image
+                </label>
+                <div className="flex items-center gap-4 mt-2">
+                  {avatarBase64 ? (
+                    <img src={avatarBase64} alt="Avatar Preview" className="w-16 h-16 rounded-full object-cover border-2 border-brand-500 shadow-sm" />
+                  ) : (
+                    <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-700 flex items-center justify-center text-gray-400">
+                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarChange}
+                    className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-gray-800 dark:file:text-brand-400 cursor-pointer transition-colors"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={!accountType || loading}
+            className="w-full bg-brand-500 hover:bg-brand-600 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed text-white px-8 py-3 rounded-xl font-bold transition-all hover-scale shadow-lg mt-6"
+          >
+            {loading ? "Saving Profile..." : "Submit"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
