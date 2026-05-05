@@ -14,6 +14,11 @@ export default async function Home() {
   // Fetch the user's profile to determine their account type
   const profile = await prisma.profile.findUnique({
     where: { clerkId: userId },
+    include: {
+      posts: {
+        orderBy: { createdAt: "desc" },
+      },
+    },
   });
 
   // If they are signed in but don't have a profile yet, the OnboardingModal 

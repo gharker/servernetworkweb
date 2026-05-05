@@ -24,4 +24,16 @@ model Profile {
   restaurantName String?
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
+  posts          Post[]
+}
+
+model Post {
+  id                    String   @id @default(uuid())
+  imageUrl              String?
+  gigsDescription       String
+  experienceDescription String
+  authorId              String
+  author                Profile  @relation(fields: [authorId], references: [clerkId], onDelete: Cascade)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 }
