@@ -57,3 +57,38 @@ export async function createProfile(data: {
   
   return profile;
 }
+
+export async function updateProfile(data: {
+  username?: string;
+  email?: string;
+  avatarUrl?: string;
+  restaurantName?: string;
+}) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+  
+  if (data.username) {
+    const existing = await prisma.profile.findUnique({
+      where: { username: data.username }
+    });
+    
+    if (existing && existing.clerkId !== userId) {
+      throw new Error("Username is already taken");
+    }
+  }
+  
+  const updated = await prisma.profile.update({
+    where: { clerkId: userId },
+    data: {
+      username: data.username !== undefined ? data.username : undefined,
+      email: data.email !== undefined ? data.email : undefined,
+      avatarUrl: data.avatarUrl !== undefined ? data.avatarUrl : undefined,
+      restaurantName: data.restaurantName !== undefined ? data.restaurantName : undefined,
+    }
+  });
+  
+  const { revalidatePath } = require("next/cache");
+  revalidatePath("/", "layout");
+  
+  return updated;
+}
