@@ -63,8 +63,8 @@ export default function OnboardingModal({ isOpen }: { isOpen: boolean }) {
         restaurantName,
         avatarUrl: avatarBase64 || undefined,
       });
-      // Refresh the page to dismiss the modal via layout state check
-      router.refresh();
+      // Force a hard reload to completely clear Next.js layout cache
+      window.location.reload();
     } catch (err: any) {
       setError(err.message || "Something went wrong");
       setLoading(false);

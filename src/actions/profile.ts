@@ -52,5 +52,8 @@ export async function createProfile(data: {
     }
   });
   
+  const { revalidatePath } = require("next/cache");
+  revalidatePath("/", "layout");
+  
   return profile;
 }
