@@ -24,13 +24,19 @@ export default function Dashboard({ profile }: { profile: any }) {
       <main className="flex-grow p-6 lg:p-12 max-w-7xl mx-auto w-full space-y-8">
         {/* Header Action Buttons */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-200 dark:border-gray-800 pb-6">
-          <button className="bg-brand-500 hover:bg-brand-600 text-white px-6 py-3 rounded-lg font-bold shadow-md transition-transform hover:scale-105">
-            {isServer ? "View Available Gigs" : "View Available Servers"}
-          </button>
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+            <button className="bg-brand-500 hover:bg-brand-600 text-white px-6 py-3 rounded-lg font-bold shadow-md transition-transform hover:scale-105 w-full sm:w-auto">
+              {isServer ? "View Available Gigs" : "View Available Servers"}
+            </button>
+            
+            <button className="bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-gray-900 px-6 py-3 rounded-lg font-bold shadow-md transition-transform hover:scale-105 w-full sm:w-auto">
+              {isServer ? "Post to the Server Feed" : "Post Available Opportunities"}
+            </button>
+          </div>
 
           <button 
             onClick={() => setIsUpdateModalOpen(true)}
-            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white px-6 py-3 rounded-lg font-bold shadow-sm transition-transform hover:scale-105"
+            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white px-6 py-3 rounded-lg font-bold shadow-sm transition-transform hover:scale-105 w-full sm:w-auto"
           >
             Update Profile
           </button>
