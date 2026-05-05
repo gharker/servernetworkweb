@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useUser, useClerk } from "@clerk/nextjs";
 import { createProfile } from "@/actions/profile";
+import { getCustomAvatarUrl } from "@/lib/avatar";
 import { useRouter } from "next/navigation";
 
 export default function OnboardingModal({ isOpen }: { isOpen: boolean }) {
@@ -52,8 +53,22 @@ export default function OnboardingModal({ isOpen }: { isOpen: boolean }) {
     setError("");
     
     try {
+      let finalAvatarUrl = avatarBase64 || undefined;
+
       if (avatarFile && user) {
         await user.setProfileImage({ file: avatarFile });
+      } else if (!avatarFile && user && username) {
+        const generatedUrl = getCustomAvatarUrl(username);
+        finalAvatarUrl = generatedUrl;
+        
+        try {
+          const response = await fetch(generatedUrl);
+          const blob = await response.blob();
+          const file = new File([blob], "avatar.png", { type: "image/png" });
+          await user.setProfileImage({ file });
+        } catch (e) {
+          console.error("Failed to upload generated avatar to Clerk:", e);
+        }
       }
 
       await createProfile({
@@ -61,7 +76,7 @@ export default function OnboardingModal({ isOpen }: { isOpen: boolean }) {
         username,
         email,
         restaurantName,
-        avatarUrl: avatarBase64 || undefined,
+        avatarUrl: finalAvatarUrl,
       });
       // Force a hard reload to completely clear Next.js layout cache
       window.location.reload();
