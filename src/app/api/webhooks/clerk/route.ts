@@ -59,7 +59,7 @@ export async function POST(req: Request) {
       console.log(`Deleted user profile for clerkId: ${id}`);
     } catch (error) {
       console.error(`Error deleting user profile: ${error}`);
-      return new Response('Error deleting profile', { status: 500 });
+      return new Response(`Error deleting profile: ${error instanceof Error ? error.message : String(error)}`, { status: 500 });
     }
   }
 
