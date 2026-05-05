@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useClerk } from "@clerk/nextjs";
 import { createProfile } from "@/actions/profile";
 import { useRouter } from "next/navigation";
 
 export default function OnboardingModal({ isOpen }: { isOpen: boolean }) {
   const { user } = useUser();
+  const { signOut } = useClerk();
   const router = useRouter();
   
   const [accountType, setAccountType] = useState<"SERVER" | "RESTAURANT" | null>(null);
@@ -195,6 +196,14 @@ export default function OnboardingModal({ isOpen }: { isOpen: boolean }) {
             className="w-full bg-brand-500 hover:bg-brand-600 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed text-white px-8 py-3 rounded-xl font-bold transition-all hover-scale shadow-lg mt-6"
           >
             {loading ? "Saving Profile..." : "Submit"}
+          </button>
+          
+          <button
+            type="button"
+            onClick={() => signOut({ redirectUrl: '/' })}
+            className="w-full mt-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-sm font-medium transition-colors"
+          >
+            Cancel & Sign Out
           </button>
         </form>
       </div>
