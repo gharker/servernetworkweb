@@ -29,7 +29,7 @@ export default function Dashboard({ profile }: { profile: any }) {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-200 dark:border-gray-800 pb-6">
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             <Link 
-              href="/feed"
+              href={isServer ? "/restaurant-feed" : "/feed"}
               className="bg-brand-500 hover:bg-brand-600 text-white px-6 py-3 rounded-lg font-bold shadow-md transition-transform hover:scale-105 w-full sm:w-auto text-center"
             >
               {isServer ? "View Available Gigs" : "View Available Servers"}
