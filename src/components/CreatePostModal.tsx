@@ -111,14 +111,18 @@ export default function CreatePostModal({
           <div className="flex items-center gap-3 py-2 border-b border-gray-100 dark:border-gray-800">
             <img src={profile?.avatarUrl || fallbackAvatar} alt="Avatar" className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-700" />
             <span className="font-bold text-gray-900 dark:text-white">
-              {profile?.username}
+              {profile?.accountType === "RESTAURANT" && profile?.restaurantName 
+                ? `${profile.username} from ${profile.restaurantName}`
+                : profile?.username}
             </span>
           </div>
 
           {/* Inputs */}
           <div>
             <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
-              What gigs are you looking to fill?
+              {profile?.accountType === "RESTAURANT" 
+                ? "Gigs I need filled." 
+                : "What gigs are you looking to fill?"}
             </label>
             <textarea
               required
@@ -132,7 +136,9 @@ export default function CreatePostModal({
 
           <div>
             <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
-              Describe your server experience?
+              {profile?.accountType === "RESTAURANT" 
+                ? "Required experience." 
+                : "Describe your server experience?"}
             </label>
             <textarea
               required
