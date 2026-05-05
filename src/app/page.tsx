@@ -42,21 +42,13 @@ export default function Home() {
         </div>
         <div className="flex items-center space-x-3 sm:space-x-4">
           {!isSignedIn ? (
-            <>
-              <SignInButton mode="modal">
-                <button
-                  className="hidden sm:inline-block text-gray-600 dark:text-gray-300 hover:text-brand-500 font-medium transition-colors"
-                >
-                  Sign In / Register
-                </button>
-              </SignInButton>
+            <SignInButton mode="modal">
               <button
-                onClick={() => setIsModalOpen(true)}
                 className="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 sm:px-5 sm:py-2 rounded-full text-sm sm:text-base font-medium transition-all hover-scale shadow-lg shadow-brand-500/30"
               >
-                Get Started
+                Sign In / Register
               </button>
-            </>
+            </SignInButton>
           ) : (
             <UserButton />
           )}
