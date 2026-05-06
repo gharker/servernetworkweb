@@ -67,12 +67,16 @@ export default function LandingPage() {
             connecting restaurants with servers when they need them the most
           </p>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <button className="w-full sm:w-auto bg-brand-500 hover:bg-brand-600 text-white px-8 py-4 rounded-full text-lg font-bold transition-all hover-scale shadow-xl shadow-brand-500/30">
-              Pick Up a Shift
-            </button>
-            <button className="w-full sm:w-auto bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 px-8 py-4 rounded-full text-lg font-bold transition-all hover-scale shadow-xl">
-              Find a Server
-            </button>
+            <SignUpButton mode="modal">
+              <button className="w-full sm:w-auto bg-brand-500 hover:bg-brand-600 text-white px-8 py-4 rounded-full text-lg font-bold transition-all hover-scale shadow-xl shadow-brand-500/30">
+                Pick Up a Shift
+              </button>
+            </SignUpButton>
+            <SignUpButton mode="modal">
+              <button className="w-full sm:w-auto bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 px-8 py-4 rounded-full text-lg font-bold transition-all hover-scale shadow-xl">
+                Find a Server
+              </button>
+            </SignUpButton>
           </div>
         </section>
 
