@@ -14,13 +14,19 @@ export const deleteInactiveChats = inngest.createFunction(
     const twoDaysAgo = new Date(Date.now() - 48 * 60 * 60 * 1000);
 
     const deletedChannelsCount = await step.run("query-and-delete-channels", async () => {
-      // Find channels where the last message was older than 48 hours
+      // Find channels that are abandoned (no recent messages) or empty (never used)
       const channels = await streamClient.queryChannels(
         { 
           type: "messaging", 
-          last_message_at: { $lt: twoDaysAgo.toISOString() } 
+          $or: [
+            { last_message_at: { $lt: twoDaysAgo.toISOString() } },
+            { 
+              last_message_at: { $exists: false },
+              created_at: { $lt: twoDaysAgo.toISOString() }
+            }
+          ]
         },
-        { last_message_at: -1 },
+        { created_at: 1 }, // Process oldest inactive channels first
         { limit: 100 }
       );
 
@@ -28,10 +34,11 @@ export const deleteInactiveChats = inngest.createFunction(
 
       for (const channel of channels) {
         try {
-          await channel.delete();
+          // Perform a hard delete to permanently wipe the channel and its data
+          await channel.delete({ hard_delete: true });
           deletedCount++;
         } catch (error) {
-          console.error(`Failed to delete channel ${channel.id}`, error);
+          console.error(`Failed to hard delete channel ${channel.id}:`, error);
         }
       }
 
