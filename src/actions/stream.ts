@@ -51,6 +51,7 @@ export async function createMessagingChannel(targetUserId: string) {
 
   const channel = serverClient.channel("messaging", {
     members: [userId, targetUserId],
+    created_by_id: userId,
   });
 
   await channel.create();
