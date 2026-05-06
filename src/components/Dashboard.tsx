@@ -5,8 +5,10 @@ import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import UpdateProfileModal from "@/components/UpdateProfileModal";
 import CreatePostModal from "@/components/CreatePostModal";
+import { useStream } from "@/hooks/useStream";
 
 export default function Dashboard({ profile }: { profile: any }) {
+  const { unreadCount } = useStream();
   const isServer = profile.accountType === "SERVER";
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
@@ -57,9 +59,26 @@ export default function Dashboard({ profile }: { profile: any }) {
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 border-b border-gray-100 dark:border-gray-800 pb-3">
               Direct Messages
             </h2>
-            <div className="p-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl text-center">
-              <p className="text-gray-500 dark:text-gray-400 font-medium">New Messages</p>
-              <p className="text-sm text-gray-400 mt-1">You have no new messages.</p>
+            <div className="p-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl text-center flex flex-col items-center justify-center">
+              <p className="text-gray-500 dark:text-gray-400 font-medium mb-2">Unread Messages</p>
+              
+              {unreadCount > 0 ? (
+                <>
+                  <span className="bg-red-500 text-white font-bold px-4 py-1.5 rounded-full text-lg shadow-sm">
+                    {unreadCount}
+                  </span>
+                  <Link href="/messages" className="mt-4 text-brand-500 hover:text-brand-600 font-bold transition-colors">
+                    Open Inbox &rarr;
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm text-gray-400">You are all caught up!</p>
+                  <Link href="/messages" className="mt-4 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium transition-colors text-sm">
+                    View Inbox
+                  </Link>
+                </>
+              )}
             </div>
           </section>
 
