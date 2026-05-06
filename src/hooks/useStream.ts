@@ -22,7 +22,7 @@ export function useStream() {
         // Only connect if not already connected to this user
         if (chatClient.userID === userId) {
           setClient(chatClient);
-          setUnreadCount(chatClient.user?.total_unread_count || 0);
+          setUnreadCount((chatClient.user as any)?.total_unread_count || 0);
         } else {
           // If connected to a different user, disconnect first
           if (chatClient.userID) {
@@ -44,7 +44,7 @@ export function useStream() {
           }
 
           setClient(chatClient);
-          setUnreadCount(chatClient.user?.total_unread_count || 0);
+          setUnreadCount((chatClient.user as any)?.total_unread_count || 0);
         }
 
         eventHandler = (event: any) => {
