@@ -53,13 +53,28 @@ export async function POST(req: Request) {
     if (!id) return new Response('No user id provided', { status: 400 });
 
     try {
+      // 1. Delete from Supabase (Prisma)
+      // Note: Related Posts are automatically deleted due to onDelete: Cascade in schema
       await prisma.profile.deleteMany({
         where: { clerkId: id }
       });
       console.log(`Deleted user profile for clerkId: ${id}`);
+
+      // 2. Delete from Stream Chat
+      const { StreamChat } = await import('stream-chat');
+      const streamClient = StreamChat.getInstance(
+        process.env.NEXT_PUBLIC_STREAM_API_KEY!,
+        process.env.STREAM_API_SECRET!
+      );
+      
+      await streamClient.deleteUser(id, { 
+        mark_messages_deleted: true, 
+        hard_delete: true 
+      });
+      console.log(`Deleted Stream Chat user and messages for clerkId: ${id}`);
     } catch (error) {
-      console.error(`Error deleting user profile: ${error}`);
-      return new Response(`Error deleting profile: ${error instanceof Error ? error.message : String(error)}`, { status: 500 });
+      console.error(`Error during cascading user deletion: ${error}`);
+      return new Response(`Error deleting user data: ${error instanceof Error ? error.message : String(error)}`, { status: 500 });
     }
   }
 
