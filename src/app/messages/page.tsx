@@ -44,7 +44,7 @@ export default function MessagesPage() {
               filters={filters} 
               sort={sort}
               options={{ limit: 30 }}
-              Paginator={(props) => <>{props.children}</>}
+              Paginator={(props: any) => <>{props.children}</>}
             />
           </div>
           <div className="flex-1 flex flex-col min-w-0 bg-white">
