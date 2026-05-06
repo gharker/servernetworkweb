@@ -5,21 +5,21 @@ import { useRouter } from "next/navigation";
 import { createPost } from "@/actions/post";
 import { getCustomAvatarUrl } from "@/lib/avatar";
 
-export default function CreatePostModal({ 
-  isOpen, 
+export default function CreatePostModal({
+  isOpen,
   onClose,
   profile
-}: { 
+}: {
   isOpen: boolean;
   onClose: () => void;
   profile: any;
 }) {
   const router = useRouter();
-  
+
   const [imageBase64, setImageBase64] = useState("");
   const [gigsDescription, setGigsDescription] = useState("");
   const [experienceDescription, setExperienceDescription] = useState("");
-  
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -42,21 +42,21 @@ export default function CreatePostModal({
       setError("Please fill out all fields.");
       return;
     }
-    
+
     setLoading(true);
     setError("");
-    
+
     try {
       await createPost({
         gigsDescription,
         experienceDescription,
         imageUrl: imageBase64 || undefined,
       });
-      
+
       setGigsDescription("");
       setExperienceDescription("");
       setImageBase64("");
-      
+
       router.refresh();
       onClose();
     } catch (err: any) {
@@ -99,9 +99,9 @@ export default function CreatePostModal({
                 <span className="font-medium text-center px-4">Add an image (optional)</span>
               </div>
             )}
-            <input 
-              type="file" 
-              accept="image/*" 
+            <input
+              type="file"
+              accept="image/*"
               onChange={handleImageChange}
               className="absolute inset-0 opacity-0 cursor-pointer"
             />
@@ -111,7 +111,7 @@ export default function CreatePostModal({
           <div className="flex items-center gap-3 py-2 border-b border-gray-100 dark:border-gray-800">
             <img src={profile?.avatarUrl || fallbackAvatar} alt="Avatar" className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-700" />
             <span className="font-bold text-gray-900 dark:text-white">
-              {profile?.accountType === "RESTAURANT" && profile?.restaurantName 
+              {profile?.accountType === "RESTAURANT" && profile?.restaurantName
                 ? `${profile.username} from ${profile.restaurantName}`
                 : profile?.username}
             </span>
@@ -120,8 +120,8 @@ export default function CreatePostModal({
           {/* Inputs */}
           <div>
             <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
-              {profile?.accountType === "RESTAURANT" 
-                ? "Gigs I need filled." 
+              {profile?.accountType === "RESTAURANT"
+                ? "Gigs I need filled."
                 : "What gigs are you looking to fill?"}
               <span className="text-red-500 ml-1">*</span>
             </label>
@@ -131,14 +131,14 @@ export default function CreatePostModal({
               value={gigsDescription}
               onChange={(e) => setGigsDescription(e.target.value)}
               className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none transition-all resize-none"
-              placeholder="e.g. Need coverage for Friday nights, fine dining events..."
+              placeholder="e.g. I'm looking for server opportunities ..."
             />
           </div>
 
           <div>
             <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
-              {profile?.accountType === "RESTAURANT" 
-                ? "Required experience." 
+              {profile?.accountType === "RESTAURANT"
+                ? "Required experience."
                 : "Describe your server experience?"}
               <span className="text-red-500 ml-1">*</span>
             </label>
