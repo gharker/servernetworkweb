@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { getCustomAvatarUrl } from "@/lib/avatar";
+import { formatRelativeTime } from "@/lib/time";
 import MessageButton from "@/components/MessageButton";
 
 export default async function RestaurantFeedPage() {
@@ -76,7 +77,7 @@ export default async function RestaurantFeedPage() {
                           {post.author.restaurantName || post.author.username}
                         </span>
                         <span className="text-sm text-gray-500">
-                          Posted on {new Date(post.createdAt).toLocaleDateString()}
+                          {formatRelativeTime(post.createdAt)}
                         </span>
                       </div>
                     </div>

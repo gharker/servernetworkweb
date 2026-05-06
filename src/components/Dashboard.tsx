@@ -6,6 +6,7 @@ import { UserButton } from "@clerk/nextjs";
 import UpdateProfileModal from "@/components/UpdateProfileModal";
 import CreatePostModal from "@/components/CreatePostModal";
 import { useStream } from "@/hooks/useStream";
+import { formatRelativeTime } from "@/lib/time";
 
 export default function Dashboard({ profile }: { profile: any }) {
   const { unreadCount } = useStream();
@@ -105,7 +106,7 @@ export default function Dashboard({ profile }: { profile: any }) {
                             {profile.username}
                           </span>
                           <span className="text-xs text-gray-500">
-                            {new Date(post.createdAt).toLocaleDateString()}
+                            {formatRelativeTime(post.createdAt)}
                           </span>
                         </div>
                       </div>
