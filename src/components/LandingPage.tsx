@@ -3,10 +3,30 @@
 import { useState } from "react";
 import Image from "next/image";
 import { SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/nextjs";
+import { sendContactMessage } from "@/actions/contact";
 
 export default function LandingPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [contactStatus, setContactStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [contactError, setContactError] = useState("");
   const { isSignedIn } = useAuth();
+
+  const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setContactStatus("loading");
+    setContactError("");
+
+    const formData = new FormData(e.currentTarget);
+    const result = await sendContactMessage(formData);
+
+    if (result.error) {
+      setContactStatus("error");
+      setContactError(result.error);
+    } else {
+      setContactStatus("success");
+      (e.target as HTMLFormElement).reset();
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -291,28 +311,38 @@ export default function LandingPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
-              <form className="glass-card p-8 text-left space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">First Name</label>
-                  <input type="text" className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all" placeholder="John" />
+              <form onSubmit={handleContactSubmit} className="glass-card p-8 text-left space-y-6">
+                {contactStatus === "success" && (
+                  <div className="bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 p-4 rounded-lg font-medium text-sm">
+                    Thanks for reaching out! We'll get back to you shortly.
+                  </div>
+                )}
+                {contactStatus === "error" && (
+                  <div className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 p-4 rounded-lg font-medium text-sm">
+                    {contactError}
+                  </div>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">First Name</label>
+                    <input type="text" name="firstName" required className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all" placeholder="John" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Last Name</label>
+                    <input type="text" name="lastName" required className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all" placeholder="Doe" />
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Last Name</label>
-                  <input type="text" className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all" placeholder="Doe" />
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
+                  <input type="email" name="email" required className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all" placeholder="john@example.com" />
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
-                <input type="email" className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all" placeholder="john@example.com" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Message</label>
-                <textarea rows={4} className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all" placeholder="How can we help you?"></textarea>
-              </div>
-              <button type="button" className="w-full bg-brand-600 hover:bg-brand-700 text-white px-8 py-4 rounded-lg font-bold transition-all hover-scale shadow-lg">
-                Send Message
-              </button>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Message</label>
+                  <textarea rows={4} name="message" required className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all" placeholder="How can we help you?"></textarea>
+                </div>
+                <button type="submit" disabled={contactStatus === "loading"} className="w-full bg-brand-600 hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-8 py-4 rounded-lg font-bold transition-all hover-scale shadow-lg">
+                  {contactStatus === "loading" ? "Sending..." : "Send Message"}
+                </button>
               </form>
 
               {/* Image */}
