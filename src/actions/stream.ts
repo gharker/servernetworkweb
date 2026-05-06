@@ -37,7 +37,7 @@ export async function getStreamToken() {
     image: profile.avatarUrl || `https://ui-avatars.com/api/?name=${profile.username}`,
     role: "user",
     accountType: profile.accountType,
-  });
+  } as any);
 
   return { token };
 }
