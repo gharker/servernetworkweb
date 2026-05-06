@@ -159,7 +159,7 @@ export default function LandingPage() {
                   <ul className="space-y-2 text-gray-600 dark:text-gray-400">
                     <li className="flex items-start"><span className="mr-2 text-brand-500 mt-1">✓</span><span><strong className="text-gray-800 dark:text-gray-200">You are your own boss.</strong> Pick up shifts when and where you want.</span></li>
                     <li className="flex items-start"><span className="mr-2 text-brand-500 mt-1">✓</span>Fit work seamlessly into your schedule.</li>
-                    <li className="flex items-start"><span className="mr-2 text-brand-500 mt-1">✓</span>Support local businesses. Our app is geofenced to list only those needing help within a 25-mile radius.</li>
+                    <li className="flex items-start"><span className="mr-2 text-brand-500 mt-1">✓</span>Support local businesses. Our app is geofenced to list only those needing help within a 45-mile radius.</li>
                   </ul>
                 </div>
               </div>

@@ -15,6 +15,10 @@ export default function OnboardingModal({ isOpen }: { isOpen: boolean }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [restaurantName, setRestaurantName] = useState("");
+  const [streetAddress, setStreetAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [zipCode, setZipCode] = useState("");
   const [avatarBase64, setAvatarBase64] = useState("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   
@@ -75,7 +79,11 @@ export default function OnboardingModal({ isOpen }: { isOpen: boolean }) {
         accountType,
         username,
         email,
-        restaurantName,
+        restaurantName: accountType === "RESTAURANT" ? restaurantName : undefined,
+        streetAddress: accountType === "RESTAURANT" ? streetAddress : undefined,
+        city: accountType === "RESTAURANT" ? city : undefined,
+        state: accountType === "RESTAURANT" ? state : undefined,
+        zipCode: accountType === "RESTAURANT" ? zipCode : undefined,
         avatarUrl: finalAvatarUrl,
       });
       // Force a hard reload to completely clear Next.js layout cache
@@ -151,20 +159,85 @@ export default function OnboardingModal({ isOpen }: { isOpen: boolean }) {
                 />
               </div>
 
-              {/* Restaurant Name (Only for Restaurant) */}
+              {/* Restaurant Details (Only for Restaurant) */}
               {accountType === "RESTAURANT" && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Restaurant Name
-                  </label>
-                  <input
-                    type="text"
-                    value={restaurantName}
-                    onChange={(e) => setRestaurantName(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none transition-all"
-                    placeholder="e.g. The Local Diner"
-                  />
-                </div>
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Restaurant Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={restaurantName}
+                      onChange={(e) => setRestaurantName(e.target.value)}
+                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none transition-all"
+                      placeholder="e.g. The Local Diner"
+                    />
+                  </div>
+                  
+                  <div className="space-y-4 pt-2">
+                    <h4 className="text-sm font-bold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
+                      Location <span className="text-gray-500 font-normal">(for local server discovery)</span>
+                    </h4>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Street Address <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={streetAddress}
+                        onChange={(e) => setStreetAddress(e.target.value)}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none transition-all"
+                        placeholder="e.g. 123 Main St"
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          City <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                          className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none transition-all"
+                          placeholder="e.g. Boston"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            State <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={state}
+                            onChange={(e) => setState(e.target.value)}
+                            className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none transition-all"
+                            placeholder="e.g. MA"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Zip <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={zipCode}
+                            onChange={(e) => setZipCode(e.target.value)}
+                            className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none transition-all"
+                            placeholder="e.g. 02118"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
               )}
 
               {/* Email */}

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { getCustomAvatarUrl } from "@/lib/avatar";
 import { formatRelativeTime } from "@/lib/time";
+import { calculateDistanceInMiles } from "@/lib/distance";
 import MessageButton from "@/components/MessageButton";
 
 export default async function ServerFeedPage() {
@@ -29,6 +30,26 @@ export default async function ServerFeedPage() {
     }
   });
 
+  const viewerProfile = await prisma.profile.findUnique({
+    where: { clerkId: userId }
+  });
+
+  let displayPosts = posts as any[];
+  if (viewerProfile?.latitude && viewerProfile?.longitude) {
+    displayPosts = posts
+      .map(post => {
+        const distance = (post.author.latitude && post.author.longitude) 
+          ? calculateDistanceInMiles(viewerProfile.latitude!, viewerProfile.longitude!, post.author.latitude, post.author.longitude)
+          : null;
+        return { ...post, distance };
+      })
+      .filter(post => post.distance !== null && post.distance <= 45)
+      .sort((a, b) => a.distance! - b.distance!);
+  } else {
+    // If viewer has no location, maybe don't filter or show all. We'll show all with no distance.
+    displayPosts = posts.map(post => ({ ...post, distance: null }));
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col">
       {/* Top Navbar */}
@@ -50,14 +71,14 @@ export default async function ServerFeedPage() {
           Server Feed
         </h1>
         
-        {posts.length === 0 ? (
+        {displayPosts.length === 0 ? (
           <div className="text-center p-12 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No servers available yet</h3>
-            <p className="text-gray-500 dark:text-gray-400">Posts from servers looking for gigs will appear here.</p>
+            <p className="text-gray-500 dark:text-gray-400">Servers within a 45-mile radius will appear here.</p>
           </div>
         ) : (
           <div className="space-y-8">
-            {posts.map((post) => (
+            {displayPosts.map((post) => (
               <div key={post.id} className="border border-gray-100 dark:border-gray-800 rounded-2xl overflow-hidden shadow-md bg-white dark:bg-gray-900">
                 {post.imageUrl && (
                   <div className="w-full aspect-video sm:aspect-[4/3] bg-gray-100 dark:bg-gray-800 relative">
@@ -76,8 +97,14 @@ export default async function ServerFeedPage() {
                         <span className="font-bold text-gray-900 dark:text-white text-lg block leading-tight">
                           {post.author.username}
                         </span>
-                        <span className="text-sm text-gray-500">
-                          {formatRelativeTime(post.createdAt)}
+                        <span className="text-sm text-gray-500 flex items-center gap-2">
+                          <span>{formatRelativeTime(post.createdAt)}</span>
+                          {post.distance !== null && (
+                            <>
+                              <span>•</span>
+                              <span>{post.distance.toFixed(1)} miles away</span>
+                            </>
+                          )}
                         </span>
                       </div>
                     </div>
