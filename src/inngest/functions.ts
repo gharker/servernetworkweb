@@ -2,8 +2,10 @@ import { inngest } from "./client";
 import { StreamChat } from "stream-chat";
 
 export const deleteInactiveChats = inngest.createFunction(
-  { id: "delete-inactive-chats" },
-  { cron: "0 * * * *" }, // Run at the top of every hour
+  { 
+    id: "delete-inactive-chats",
+    triggers: [{ cron: "0 * * * *" }] // Run at the top of every hour
+  },
   async ({ step }) => {
     const streamClient = StreamChat.getInstance(
       process.env.NEXT_PUBLIC_STREAM_API_KEY!,
