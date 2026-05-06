@@ -123,6 +123,7 @@ export default function CreatePostModal({
               {profile?.accountType === "RESTAURANT" 
                 ? "Gigs I need filled." 
                 : "What gigs are you looking to fill?"}
+              <span className="text-red-500 ml-1">*</span>
             </label>
             <textarea
               required
@@ -139,6 +140,7 @@ export default function CreatePostModal({
               {profile?.accountType === "RESTAURANT" 
                 ? "Required experience." 
                 : "Describe your server experience?"}
+              <span className="text-red-500 ml-1">*</span>
             </label>
             <textarea
               required
