@@ -135,7 +135,7 @@ const ChatLayout = ({ filters, sort }: { filters: any, sort: any }) => {
         `}
       >
         <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 shrink-0">
-          <span className="font-bold text-gray-900 text-lg">Inbox</span>
+          <span className="font-bold text-gray-900 text-lg">Chats</span>
           <button onClick={() => setIsMobileListOpen(false)} className="text-gray-500 hover:text-gray-700 bg-gray-200 p-1.5 rounded-full transition-colors">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
