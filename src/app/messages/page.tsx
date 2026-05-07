@@ -40,7 +40,7 @@ const CustomMobileChannelList = ({ filters, sort, onClose, client }: any) => {
   return (
     <div className="flex flex-col w-full h-full p-2 space-y-1 overflow-y-auto custom-scrollbar">
       {channels.map(c => {
-        const members = Object.values(c.state.members || {});
+        const members = Object.values(c.state.members || {}) as any[];
         const otherMember = members.find((m: any) => m.user?.id !== client.userID)?.user;
         const name = c.data?.name || otherMember?.name || "Conversation";
         const image = c.data?.image || otherMember?.image;
