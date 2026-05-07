@@ -48,6 +48,7 @@ export default function Dashboard({ profile }: { profile: any }) {
       </nav>
 
       <main className="flex-grow p-6 lg:p-12 max-w-7xl mx-auto w-full space-y-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Dashboard</h1>
         {/* Header Action Buttons */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-200 dark:border-gray-800 pb-6">
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
