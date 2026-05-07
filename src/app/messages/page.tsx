@@ -1,10 +1,173 @@
 "use client";
 
 import { useStream } from "@/hooks/useStream";
-import { Chat, Channel, ChannelHeader, ChannelList, MessageComposer, MessageList, Window } from "stream-chat-react";
+import { Chat, Channel, ChannelHeader, ChannelList, MessageComposer, MessageList, Window, useChatContext } from "stream-chat-react";
 import "stream-chat-react/dist/css/index.css";
 import Link from "next/link";
 import { UserButton, useAuth } from "@clerk/nextjs";
+
+import { useState, useEffect, useCallback } from "react";
+
+const CustomMobileChannelList = ({ filters, sort, onClose, client }: any) => {
+  const [channels, setChannels] = useState<any[]>([]);
+  const { setActiveChannel, channel: activeChannel } = useChatContext();
+
+  const fetchChannels = useCallback(async () => {
+    if (!client) return;
+    try {
+      const result = await client.queryChannels(filters, sort, { limit: 30 });
+      setChannels(result);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [client, filters, sort]);
+
+  useEffect(() => {
+    fetchChannels();
+    const handleEvent = () => setTimeout(fetchChannels, 200);
+    client.on('message.new', handleEvent);
+    client.on('notification.message_new', handleEvent);
+    client.on('notification.added_to_channel', handleEvent);
+    client.on('channel.updated', handleEvent);
+    return () => {
+      client.off('message.new', handleEvent);
+      client.off('notification.message_new', handleEvent);
+      client.off('notification.added_to_channel', handleEvent);
+      client.off('channel.updated', handleEvent);
+    };
+  }, [client, fetchChannels]);
+
+  return (
+    <div className="flex flex-col w-full h-full p-2 space-y-1 overflow-y-auto custom-scrollbar">
+      {channels.map(c => {
+        const members = Object.values(c.state.members || {});
+        const otherMember = members.find((m: any) => m.user?.id !== client.userID)?.user;
+        const name = c.data?.name || otherMember?.name || "Conversation";
+        const image = c.data?.image || otherMember?.image;
+        const unread = c.state.unreadCount || 0;
+        const isActive = activeChannel?.cid === c.cid;
+        const lastMessage = c.state.messages[c.state.messages.length - 1]?.text || "No messages yet";
+
+        return (
+          <button
+            key={c.cid}
+            onClick={() => {
+              setActiveChannel(c);
+              onClose();
+            }}
+            className={`w-full text-left p-3 rounded-xl flex items-center gap-3 transition-all ${
+              isActive ? 'bg-brand-50 border border-brand-200' : 'bg-white hover:bg-gray-50 border border-transparent hover:border-gray-100'
+            }`}
+          >
+            <div className="relative shrink-0 w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center overflow-hidden border border-brand-200">
+              {image ? (
+                <img src={image} alt={name} className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-brand-600 font-bold text-lg">{name.charAt(0).toUpperCase()}</span>
+              )}
+            </div>
+            <div className="flex-1 min-w-0 flex flex-col justify-center">
+              <div className="flex justify-between items-center mb-0.5">
+                <p className={`text-sm truncate pr-2 ${isActive ? 'font-bold text-brand-700' : 'font-semibold text-gray-900'}`}>
+                  {name}
+                </p>
+                {unread > 0 && (
+                  <span className="shrink-0 bg-brand-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                    {unread}
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 truncate">
+                {lastMessage}
+              </p>
+            </div>
+          </button>
+        );
+      })}
+      {channels.length === 0 && (
+        <div className="p-6 text-center">
+          <p className="text-sm text-gray-500 font-medium">No conversations yet.</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const ChatLayout = ({ filters, sort }: { filters: any, sort: any }) => {
+  const { channel, setActiveChannel, client } = useChatContext();
+  const [isMobileListOpen, setIsMobileListOpen] = useState(!channel);
+
+  useEffect(() => {
+    if (channel) {
+      setIsMobileListOpen(false);
+    }
+  }, [channel]);
+
+  return (
+    <div className="flex w-full h-full relative">
+      {/* Desktop Sidebar (Uses standard Stream component) */}
+      <div className="hidden md:block w-80 h-full border-r border-gray-200 shrink-0 bg-white">
+        <div className="flex-1 overflow-y-auto h-full">
+          <ChannelList 
+            filters={filters} 
+            sort={sort}
+            options={{ limit: 30 }}
+            setActiveChannelOnMount={false}
+            Paginator={(props: any) => <>{props.children}</>}
+          />
+        </div>
+      </div>
+
+      {/* Mobile Drawer Overlay */}
+      {isMobileListOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
+          onClick={() => setIsMobileListOpen(false)}
+        />
+      )}
+
+      {/* Mobile Drawer */}
+      <div 
+        className={`
+          md:hidden
+          fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-white flex flex-col shrink-0 z-50 transform transition-transform duration-300 ease-in-out shadow-2xl border-r border-gray-200
+          ${isMobileListOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}
+      >
+        <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 shrink-0">
+          <span className="font-bold text-gray-900 text-lg">Inbox</span>
+          <button onClick={() => setIsMobileListOpen(false)} className="text-gray-500 hover:text-gray-700 bg-gray-200 p-1.5 rounded-full transition-colors">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+        <div className="flex-1 min-h-0 relative bg-white">
+           <CustomMobileChannelList filters={filters} sort={sort} onClose={() => setIsMobileListOpen(false)} client={client} />
+        </div>
+      </div>
+
+      {/* Main Channel Area */}
+      <div className="flex-1 h-full flex flex-col min-w-0 bg-white relative w-full">
+        <Channel>
+          <Window>
+            {/* Mobile Top Bar to Open Drawer */}
+            <div className="md:hidden flex items-center bg-white border-b border-gray-100 p-2 shadow-sm shrink-0 z-10">
+              <button 
+                onClick={() => setIsMobileListOpen(true)}
+                className="p-2 text-white bg-brand-500 hover:bg-brand-600 rounded-lg mr-3 shadow-md transition-colors flex items-center"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+              </button>
+              <span className="font-bold text-gray-800">{channel ? "Active Chat" : "Select a Conversation"}</span>
+            </div>
+            <ChannelHeader />
+            <MessageList />
+            <MessageComposer />
+          </Window>
+        </Channel>
+      </div>
+    </div>
+  );
+};
 
 export default function MessagesPage() {
   const { userId } = useAuth();
@@ -39,23 +202,7 @@ export default function MessagesPage() {
 
       <main className="flex-grow flex overflow-hidden">
         <Chat client={client} theme="str-chat__theme-light">
-          <div className="w-80 border-r border-gray-200 shrink-0 overflow-y-auto">
-            <ChannelList 
-              filters={filters} 
-              sort={sort}
-              options={{ limit: 30 }}
-              Paginator={(props: any) => <>{props.children}</>}
-            />
-          </div>
-          <div className="flex-1 flex flex-col min-w-0 bg-white">
-            <Channel>
-              <Window>
-                <ChannelHeader />
-                <MessageList />
-                <MessageComposer />
-              </Window>
-            </Channel>
-          </div>
+          <ChatLayout filters={filters} sort={sort} />
         </Chat>
       </main>
     </div>
