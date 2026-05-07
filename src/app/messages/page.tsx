@@ -150,14 +150,15 @@ const ChatLayout = ({ filters, sort }: { filters: any, sort: any }) => {
         <Channel>
           <Window>
             {/* Mobile Top Bar to Open Drawer */}
-            <div className="md:hidden flex items-center bg-white border-b border-gray-100 p-2 shadow-sm shrink-0 z-10">
+            <div className="md:hidden flex items-center justify-between bg-white border-b border-gray-100 p-3 shadow-sm shrink-0 z-10">
+              <span className="font-bold text-gray-800">{channel ? "Active Chat" : "Select a Conversation"}</span>
               <button 
                 onClick={() => setIsMobileListOpen(true)}
-                className="p-2 text-white bg-brand-500 hover:bg-brand-600 rounded-lg mr-3 shadow-md transition-colors flex items-center"
+                className="px-3 py-1.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg shadow-sm transition-colors flex items-center text-sm font-semibold border border-gray-200"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
+                Chats
               </button>
-              <span className="font-bold text-gray-800">{channel ? "Active Chat" : "Select a Conversation"}</span>
             </div>
             <ChannelHeader />
             <MessageList />
