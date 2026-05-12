@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import OnboardingModal from "@/components/OnboardingModal";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -47,6 +48,7 @@ export default async function RootLayout({
       >
         <body suppressHydrationWarning className="min-h-full flex flex-col">
           {children}
+          <Toaster />
           <OnboardingModal isOpen={needsProfile} />
         </body>
       </html>

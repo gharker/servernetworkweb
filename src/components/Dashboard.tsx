@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useTransition } from "react";
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import UpdateProfileModal from "@/components/UpdateProfileModal";
@@ -9,7 +9,8 @@ import { useStream } from "@/hooks/useStream";
 import { formatRelativeTime } from "@/lib/time";
 import LocationUpdater from "@/components/LocationUpdater";
 import { getDashboardStats } from "@/actions/dashboard";
-import { useEffect } from "react";
+import { deletePost } from "@/actions/post";
+import toast from "react-hot-toast";
 
 export default function Dashboard({ profile }: { profile: any }) {
   const { unreadCount } = useStream();
@@ -17,6 +18,42 @@ export default function Dashboard({ profile }: { profile: any }) {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [stats, setStats] = useState<{ recentPostsCount: number; totalNearbyCount: number } | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const handleDeletePost = (postId: string) => {
+    toast((t) => (
+      <div>
+        <p className="mb-3 font-medium">Are you sure you want to delete this post?</p>
+        <div className="flex justify-end gap-2">
+          <button 
+            onClick={() => toast.dismiss(t.id)}
+            className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            onClick={() => {
+              toast.dismiss(t.id);
+              startTransition(async () => {
+                try {
+                  await deletePost(postId);
+                  toast.success("Post deleted successfully");
+                } catch (error) {
+                  console.error("Failed to delete post:", error);
+                  toast.error("Failed to delete post.");
+                }
+              });
+            }}
+            className="px-3 py-1.5 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    ), {
+      duration: Infinity,
+    });
+  };
 
   useEffect(() => {
     if (!isServer && profile.latitude && profile.longitude) {
@@ -158,7 +195,15 @@ export default function Dashboard({ profile }: { profile: any }) {
             {profile.posts && profile.posts.length > 0 ? (
               <div className="space-y-6">
                 {profile.posts.map((post: any) => (
-                  <div key={post.id} className="border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-gray-900">
+                  <div key={post.id} className="relative border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-gray-900">
+                    <button 
+                      onClick={() => handleDeletePost(post.id)}
+                      disabled={isPending}
+                      className="absolute top-4 right-4 z-10 p-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-500 hover:text-red-500 rounded-full transition-colors shadow-sm"
+                      aria-label="Delete post"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
                     {post.imageUrl && (
                       <div className="w-full aspect-video sm:aspect-[4/3] bg-gray-100 dark:bg-gray-800 relative">
                         <img src={post.imageUrl} alt="Post image" className="absolute inset-0 w-full h-full object-cover" />

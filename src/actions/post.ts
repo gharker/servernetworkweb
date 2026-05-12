@@ -25,3 +25,24 @@ export async function createPost(data: {
   
   return post;
 }
+
+export async function deletePost(postId: string) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+  
+  // Verify the post belongs to the user
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
+  });
+
+  if (!post || post.authorId !== userId) {
+    throw new Error("Unauthorized or post not found");
+  }
+
+  await prisma.post.delete({
+    where: { id: postId },
+  });
+
+  const { revalidatePath } = require("next/cache");
+  revalidatePath("/", "layout");
+}
