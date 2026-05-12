@@ -1,18 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createPost } from "@/actions/post";
+import { updatePost } from "@/actions/post";
 import { getCustomAvatarUrl } from "@/lib/avatar";
+import toast from "react-hot-toast";
 
-export default function CreatePostModal({
+export default function EditPostModal({
   isOpen,
   onClose,
-  profile
+  profile,
+  post
 }: {
   isOpen: boolean;
   onClose: () => void;
   profile: any;
+  post: any;
 }) {
   const router = useRouter();
 
@@ -23,7 +26,16 @@ export default function CreatePostModal({
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (isOpen && post) {
+      setGigsDescription(post.gigsDescription || "");
+      setExperienceDescription(post.experienceDescription || "");
+      setImageBase64(post.imageUrl || "");
+      setError("");
+    }
+  }, [isOpen, post]);
+
+  if (!isOpen || !post) return null;
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -47,16 +59,13 @@ export default function CreatePostModal({
     setError("");
 
     try {
-      await createPost({
+      await updatePost(post.id, {
         gigsDescription,
         experienceDescription,
         imageUrl: imageBase64 || undefined,
       });
 
-      setGigsDescription("");
-      setExperienceDescription("");
-      setImageBase64("");
-
+      toast.success("Post updated successfully");
       router.refresh();
       onClose();
     } catch (err: any) {
@@ -79,7 +88,7 @@ export default function CreatePostModal({
         </button>
 
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
-          Create Post
+          Edit Post
         </h2>
 
         {error && (
@@ -96,7 +105,7 @@ export default function CreatePostModal({
             ) : (
               <div className="text-gray-400 flex flex-col items-center pointer-events-none group-hover:text-brand-500 transition-colors">
                 <svg className="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                <span className="font-medium text-center px-4">Add an image (optional)</span>
+                <span className="font-medium text-center px-4">Change image (optional)</span>
               </div>
             )}
             <input
@@ -161,7 +170,7 @@ export default function CreatePostModal({
             disabled={loading}
             className="w-full bg-brand-500 hover:bg-brand-600 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed text-white px-8 py-4 rounded-xl font-bold transition-all hover-scale shadow-lg mt-2 text-lg"
           >
-            {loading ? "Posting..." : "Post"}
+            {loading ? "Saving..." : "Save Changes"}
           </button>
         </form>
       </div>

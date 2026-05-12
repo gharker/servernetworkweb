@@ -46,3 +46,38 @@ export async function deletePost(postId: string) {
   const { revalidatePath } = require("next/cache");
   revalidatePath("/", "layout");
 }
+
+export async function updatePost(
+  postId: string,
+  data: {
+    gigsDescription: string;
+    experienceDescription: string;
+    imageUrl?: string | null;
+  }
+) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+  
+  // Verify the post belongs to the user
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
+  });
+
+  if (!post || post.authorId !== userId) {
+    throw new Error("Unauthorized or post not found");
+  }
+
+  const updatedPost = await prisma.post.update({
+    where: { id: postId },
+    data: {
+      gigsDescription: data.gigsDescription,
+      experienceDescription: data.experienceDescription,
+      ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl }),
+    }
+  });
+
+  const { revalidatePath } = require("next/cache");
+  revalidatePath("/", "layout");
+  
+  return updatedPost;
+}

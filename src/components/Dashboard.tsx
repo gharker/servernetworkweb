@@ -5,6 +5,7 @@ import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import UpdateProfileModal from "@/components/UpdateProfileModal";
 import CreatePostModal from "@/components/CreatePostModal";
+import EditPostModal from "@/components/EditPostModal";
 import { useStream } from "@/hooks/useStream";
 import { formatRelativeTime } from "@/lib/time";
 import LocationUpdater from "@/components/LocationUpdater";
@@ -17,6 +18,7 @@ export default function Dashboard({ profile }: { profile: any }) {
   const isServer = profile.accountType === "SERVER";
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+  const [editingPost, setEditingPost] = useState<any>(null);
   const [stats, setStats] = useState<{ recentPostsCount: number; totalNearbyCount: number } | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -196,14 +198,24 @@ export default function Dashboard({ profile }: { profile: any }) {
               <div className="space-y-6">
                 {profile.posts.map((post: any) => (
                   <div key={post.id} className="relative border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-gray-900">
-                    <button 
-                      onClick={() => handleDeletePost(post.id)}
-                      disabled={isPending}
-                      className="absolute top-4 right-4 z-10 p-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-500 hover:text-red-500 rounded-full transition-colors shadow-sm"
-                      aria-label="Delete post"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                    </button>
+                    <div className="absolute top-4 right-4 z-10 flex gap-2">
+                      <button 
+                        onClick={() => setEditingPost(post)}
+                        disabled={isPending}
+                        className="p-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm hover:bg-blue-50 dark:hover:bg-blue-900/30 text-gray-500 hover:text-blue-500 rounded-full transition-colors shadow-sm"
+                        aria-label="Edit post"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                      </button>
+                      <button 
+                        onClick={() => handleDeletePost(post.id)}
+                        disabled={isPending}
+                        className="p-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-500 hover:text-red-500 rounded-full transition-colors shadow-sm"
+                        aria-label="Delete post"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                      </button>
+                    </div>
                     {post.imageUrl && (
                       <div className="w-full aspect-video sm:aspect-[4/3] bg-gray-100 dark:bg-gray-800 relative">
                         <img src={post.imageUrl} alt="Post image" className="absolute inset-0 w-full h-full object-cover" />
@@ -264,6 +276,13 @@ export default function Dashboard({ profile }: { profile: any }) {
         isOpen={isPostModalOpen}
         onClose={() => setIsPostModalOpen(false)}
         profile={profile}
+      />
+
+      <EditPostModal
+        isOpen={!!editingPost}
+        onClose={() => setEditingPost(null)}
+        profile={profile}
+        post={editingPost}
       />
     </div>
   );
