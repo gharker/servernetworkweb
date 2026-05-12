@@ -3,6 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { StreamChat } from "stream-chat";
 import { prisma } from "@/lib/prisma";
+import { getCustomAvatarUrl } from "@/lib/avatar";
 
 const serverClient = StreamChat.getInstance(
   process.env.NEXT_PUBLIC_STREAM_API_KEY!,
@@ -31,8 +32,8 @@ export async function getStreamToken() {
   // Stream Chat limits custom data to 5KB. Base64 images easily exceed this.
   const isBase64Avatar = profile.avatarUrl?.startsWith("data:image/");
   const streamImageUrl = isBase64Avatar 
-    ? `https://ui-avatars.com/api/?name=${profile.username}` 
-    : (profile.avatarUrl || `https://ui-avatars.com/api/?name=${profile.username}`);
+    ? getCustomAvatarUrl(profile.username)
+    : (profile.avatarUrl || getCustomAvatarUrl(profile.username));
 
   // Sync profile details to Stream
   await serverClient.upsertUser({
@@ -64,8 +65,8 @@ export async function createMessagingChannel(targetUserId: string) {
   if (targetProfile) {
     const isBase64Avatar = targetProfile.avatarUrl?.startsWith("data:image/");
     const targetImageUrl = isBase64Avatar 
-      ? `https://ui-avatars.com/api/?name=${targetProfile.username}` 
-      : (targetProfile.avatarUrl || `https://ui-avatars.com/api/?name=${targetProfile.username}`);
+      ? getCustomAvatarUrl(targetProfile.username)
+      : (targetProfile.avatarUrl || getCustomAvatarUrl(targetProfile.username));
 
     await serverClient.upsertUser({
       id: targetUserId,
