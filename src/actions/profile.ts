@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 
@@ -84,7 +85,6 @@ export async function createProfile(data: {
     }
   });
   
-  const { revalidatePath } = require("next/cache");
   revalidatePath("/", "layout");
   
   return profile;
@@ -160,7 +160,6 @@ export async function updateProfile(data: {
     }
   });
   
-  const { revalidatePath } = require("next/cache");
   revalidatePath("/", "layout");
   
   return updated;
