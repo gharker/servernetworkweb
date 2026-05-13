@@ -75,7 +75,7 @@ export default function OnboardingModal({ isOpen }: { isOpen: boolean }) {
         }
       }
 
-      await createProfile({
+      const result = await createProfile({
         accountType,
         username,
         email,
@@ -86,6 +86,13 @@ export default function OnboardingModal({ isOpen }: { isOpen: boolean }) {
         zipCode: accountType === "RESTAURANT" ? zipCode : undefined,
         avatarUrl: finalAvatarUrl,
       });
+      
+      if (result && 'error' in result) {
+        setError(result.error as string);
+        setLoading(false);
+        return;
+      }
+      
       // Force a hard reload to completely clear Next.js layout cache
       window.location.reload();
     } catch (err: any) {

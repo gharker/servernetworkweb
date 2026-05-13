@@ -77,7 +77,7 @@ export default function UpdateProfileModal({
         finalAvatarUrl = avatarBase64;
       }
 
-      await updateProfile({
+      const result = await updateProfile({
         username,
         email,
         restaurantName: profile.accountType === "RESTAURANT" ? restaurantName : undefined,
@@ -87,6 +87,12 @@ export default function UpdateProfileModal({
         zipCode: profile.accountType === "RESTAURANT" ? zipCode : undefined,
         avatarUrl: finalAvatarUrl,
       });
+      
+      if (result && 'error' in result) {
+        setError(result.error as string);
+        setLoading(false);
+        return;
+      }
       
       router.refresh();
       onClose();

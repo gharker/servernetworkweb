@@ -34,7 +34,7 @@ export async function createProfile(data: {
   });
   
   if (existing) {
-    throw new Error("Profile already exists");
+    return { error: "Profile already exists" };
   }
   
   // Check if username is taken
@@ -43,7 +43,7 @@ export async function createProfile(data: {
   });
   
   if (usernameTaken) {
-    throw new Error("Username is already taken");
+    return { error: "Username is already taken" };
   }
   
   let latitude: number | null = null;
@@ -109,7 +109,7 @@ export async function updateProfile(data: {
     });
     
     if (existing && existing.clerkId !== userId) {
-      throw new Error("Username is already taken");
+      return { error: "Username is already taken" };
     }
   }
   
