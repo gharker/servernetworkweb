@@ -249,8 +249,9 @@ export default function OnboardingModal({ isOpen }: { isOpen: boolean }) {
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none transition-all"
+                  readOnly
+                  disabled
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 outline-none transition-all cursor-not-allowed"
                   placeholder="john@example.com"
                 />
               </div>
