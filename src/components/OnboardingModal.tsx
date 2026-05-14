@@ -111,12 +111,6 @@ export default function OnboardingModal({ isOpen }: { isOpen: boolean }) {
           This is required to create an account.
         </p>
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm text-center">
-            {error}
-          </div>
-        )}
-
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Account Type Selection */}
           <div className="space-y-3">
@@ -282,6 +276,12 @@ export default function OnboardingModal({ isOpen }: { isOpen: boolean }) {
                   />
                 </div>
               </div>
+            </div>
+          )}
+
+          {error && (
+            <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm text-center mt-4">
+              {error}
             </div>
           )}
 
