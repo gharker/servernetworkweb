@@ -38,13 +38,20 @@ export default async function RestaurantFeedPage() {
   if (viewerProfile?.latitude && viewerProfile?.longitude) {
     displayPosts = posts
       .map(post => {
-        const distance = (post.author.latitude && post.author.longitude) 
-          ? calculateDistanceInMiles(viewerProfile.latitude!, viewerProfile.longitude!, post.author.latitude, post.author.longitude)
+        const postLat = post.latitude || post.author.latitude;
+        const postLng = post.longitude || post.author.longitude;
+        const distance = (postLat && postLng) 
+          ? calculateDistanceInMiles(viewerProfile.latitude!, viewerProfile.longitude!, postLat, postLng)
           : null;
         return { ...post, distance };
       })
-      .filter(post => post.distance !== null && post.distance <= 45)
-      .sort((a, b) => a.distance! - b.distance!);
+      .filter(post => post.distance === null || post.distance <= 45)
+      .sort((a, b) => {
+        if (a.distance === null && b.distance !== null) return 1;
+        if (b.distance === null && a.distance !== null) return -1;
+        if (a.distance === null && b.distance === null) return 0;
+        return a.distance! - b.distance!;
+      });
   } else {
     // If viewer has no location, maybe don't filter or show all. We'll show all with no distance.
     displayPosts = posts.map(post => ({ ...post, distance: null }));

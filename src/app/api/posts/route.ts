@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { gigsDescription, experienceDescription, imageUrl } = body;
+    const { gigsDescription, experienceDescription, imageUrl, latitude, longitude } = body;
 
     if (!gigsDescription || !experienceDescription) {
       return new NextResponse("Missing required fields", { status: 400 });
@@ -23,6 +23,8 @@ export async function POST(req: Request) {
         gigsDescription,
         experienceDescription,
         imageUrl: imageUrl || undefined,
+        latitude: latitude || undefined,
+        longitude: longitude || undefined,
       }
     });
 
