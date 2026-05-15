@@ -11,6 +11,11 @@ export async function GET() {
 
     const profile = await prisma.profile.findUnique({
       where: { clerkId: userId },
+      include: {
+        posts: {
+          orderBy: { createdAt: 'desc' }
+        }
+      }
     });
 
     if (!profile) {
