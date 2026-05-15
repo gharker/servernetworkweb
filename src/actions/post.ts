@@ -27,23 +27,28 @@ export async function createPost(data: {
 }
 
 export async function deletePost(postId: string) {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
-  
-  // Verify the post belongs to the user
-  const post = await prisma.post.findUnique({
-    where: { id: postId },
-  });
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+    
+    // Verify the post belongs to the user
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+    });
 
-  if (!post || post.authorId !== userId) {
-    throw new Error("Unauthorized or post not found");
+    if (!post || post.authorId !== userId) {
+      throw new Error("Unauthorized or post not found");
+    }
+
+    await prisma.post.delete({
+      where: { id: postId },
+    });
+
+    revalidatePath("/", "layout");
+  } catch (error) {
+    console.error("[DELETE_POST_ACTION_ERROR]", error);
+    throw error;
   }
-
-  await prisma.post.delete({
-    where: { id: postId },
-  });
-
-  revalidatePath("/", "layout");
 }
 
 export async function updatePost(
@@ -54,28 +59,33 @@ export async function updatePost(
     imageUrl?: string | null;
   }
 ) {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
-  
-  // Verify the post belongs to the user
-  const post = await prisma.post.findUnique({
-    where: { id: postId },
-  });
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+    
+    // Verify the post belongs to the user
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+    });
 
-  if (!post || post.authorId !== userId) {
-    throw new Error("Unauthorized or post not found");
-  }
-
-  const updatedPost = await prisma.post.update({
-    where: { id: postId },
-    data: {
-      gigsDescription: data.gigsDescription,
-      experienceDescription: data.experienceDescription,
-      ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl }),
+    if (!post || post.authorId !== userId) {
+      throw new Error("Unauthorized or post not found");
     }
-  });
 
-  revalidatePath("/", "layout");
-  
-  return updatedPost;
+    const updatedPost = await prisma.post.update({
+      where: { id: postId },
+      data: {
+        gigsDescription: data.gigsDescription,
+        experienceDescription: data.experienceDescription,
+        ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl }),
+      }
+    });
+
+    revalidatePath("/", "layout");
+    
+    return updatedPost;
+  } catch (error) {
+    console.error("[UPDATE_POST_ACTION_ERROR]", error);
+    throw error;
+  }
 }

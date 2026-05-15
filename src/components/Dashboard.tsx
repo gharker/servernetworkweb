@@ -38,8 +38,12 @@ export default function Dashboard({ profile }: { profile: any }) {
               toast.dismiss(t.id);
               startTransition(async () => {
                 try {
-                  await deletePost(postId);
+                  const res = await fetch(`/api/posts/${postId}`, { method: "DELETE" });
+                  if (!res.ok) throw new Error(await res.text());
+                  
                   toast.success("Post deleted successfully");
+                  // refresh the page
+                  window.location.reload();
                 } catch (error) {
                   console.error("Failed to delete post:", error);
                   toast.error("Failed to delete post.");

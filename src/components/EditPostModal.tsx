@@ -59,11 +59,17 @@ export default function EditPostModal({
     setError("");
 
     try {
-      await updatePost(post.id, {
-        gigsDescription,
-        experienceDescription,
-        imageUrl: imageBase64 || undefined,
+      const res = await fetch(`/api/posts/${post.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          gigsDescription,
+          experienceDescription,
+          imageUrl: imageBase64 || undefined,
+        }),
       });
+
+      if (!res.ok) throw new Error(await res.text() || "Failed to update post");
 
       toast.success("Post updated successfully");
       router.refresh();
