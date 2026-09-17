@@ -20,6 +20,7 @@ export async function createProfile(data: {
   username: string;
   email?: string;
   avatarUrl?: string;
+  serverExperience?: string;
   restaurantName?: string;
   streetAddress?: string;
   city?: string;
@@ -75,6 +76,7 @@ export async function createProfile(data: {
       username: data.username,
       email: data.email,
       avatarUrl: data.avatarUrl,
+      serverExperience: data.accountType === "SERVER" ? (data.serverExperience || null) : null,
       restaurantName: data.accountType === "RESTAURANT" ? data.restaurantName : null,
       streetAddress: data.accountType === "RESTAURANT" ? data.streetAddress : null,
       city: data.accountType === "RESTAURANT" ? data.city : null,
@@ -94,6 +96,7 @@ export async function updateProfile(data: {
   username?: string;
   email?: string;
   avatarUrl?: string;
+  serverExperience?: string;
   restaurantName?: string;
   streetAddress?: string;
   city?: string;
@@ -150,6 +153,7 @@ export async function updateProfile(data: {
       username: data.username !== undefined ? data.username : undefined,
       email: data.email !== undefined ? data.email : undefined,
       avatarUrl: data.avatarUrl !== undefined ? data.avatarUrl : undefined,
+      serverExperience: data.serverExperience !== undefined ? data.serverExperience : undefined,
       restaurantName: data.restaurantName !== undefined ? data.restaurantName : undefined,
       streetAddress: data.streetAddress !== undefined ? data.streetAddress : undefined,
       city: data.city !== undefined ? data.city : undefined,

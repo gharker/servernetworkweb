@@ -15,6 +15,7 @@ export default function OnboardingModal({ isOpen }: { isOpen: boolean }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [restaurantName, setRestaurantName] = useState("");
+  const [serverExperience, setServerExperience] = useState("");
   const [streetAddress, setStreetAddress] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
@@ -79,6 +80,7 @@ export default function OnboardingModal({ isOpen }: { isOpen: boolean }) {
         accountType,
         username,
         email,
+        serverExperience: accountType === "SERVER" ? serverExperience : undefined,
         restaurantName: accountType === "RESTAURANT" ? restaurantName : undefined,
         streetAddress: accountType === "RESTAURANT" ? streetAddress : undefined,
         city: accountType === "RESTAURANT" ? city : undefined,
@@ -160,6 +162,22 @@ export default function OnboardingModal({ isOpen }: { isOpen: boolean }) {
                   autoCapitalize="none"
                 />
               </div>
+
+              {/* Server Experience (Only for Server) */}
+              {accountType === "SERVER" && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Server Experience
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={serverExperience}
+                    onChange={(e) => setServerExperience(e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none transition-all resize-none"
+                    placeholder="e.g. I have five years of experience as a server, busser, and host."
+                  />
+                </div>
+              )}
 
               {/* Restaurant Details (Only for Restaurant) */}
               {accountType === "RESTAURANT" && (

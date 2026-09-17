@@ -20,8 +20,9 @@ model Profile {
   accountType    AccountType
   username       String      @unique
   email          String?
-  avatarUrl      String?
-  restaurantName String?
+  avatarUrl        String?
+  serverExperience String?
+  restaurantName   String?
   streetAddress  String?
   city           String?
   state          String?

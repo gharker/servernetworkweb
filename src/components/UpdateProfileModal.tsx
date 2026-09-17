@@ -20,6 +20,7 @@ export default function UpdateProfileModal({
   const [username, setUsername] = useState(profile?.username || "");
   const [email, setEmail] = useState(profile?.email || "");
   const [restaurantName, setRestaurantName] = useState(profile?.restaurantName || "");
+  const [serverExperience, setServerExperience] = useState(profile?.serverExperience || "");
   const [streetAddress, setStreetAddress] = useState(profile?.streetAddress || "");
   const [city, setCity] = useState(profile?.city || "");
   const [state, setState] = useState(profile?.state || "");
@@ -35,6 +36,7 @@ export default function UpdateProfileModal({
       setUsername(profile.username || "");
       setEmail(profile.email || "");
       setRestaurantName(profile.restaurantName || "");
+      setServerExperience(profile.serverExperience || "");
       setStreetAddress(profile.streetAddress || "");
       setCity(profile.city || "");
       setState(profile.state || "");
@@ -80,6 +82,7 @@ export default function UpdateProfileModal({
       const result = await updateProfile({
         username,
         email,
+        serverExperience: profile.accountType === "SERVER" ? serverExperience : undefined,
         restaurantName: profile.accountType === "RESTAURANT" ? restaurantName : undefined,
         streetAddress: profile.accountType === "RESTAURANT" ? streetAddress : undefined,
         city: profile.accountType === "RESTAURANT" ? city : undefined,
@@ -137,6 +140,21 @@ export default function UpdateProfileModal({
               autoCapitalize="none"
             />
           </div>
+
+          {profile?.accountType === "SERVER" && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Server Experience
+              </label>
+              <textarea
+                rows={3}
+                value={serverExperience}
+                onChange={(e) => setServerExperience(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none transition-all resize-none"
+                placeholder="e.g. I have five years of experience as a server, busser, and host."
+              />
+            </div>
+          )}
 
           {profile?.accountType === "RESTAURANT" && (
             <>
