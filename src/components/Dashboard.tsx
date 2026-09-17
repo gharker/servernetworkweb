@@ -11,6 +11,7 @@ import { formatRelativeTime } from "@/lib/time";
 import LocationUpdater from "@/components/LocationUpdater";
 import { getDashboardStats } from "@/actions/dashboard";
 import { deletePost } from "@/actions/post";
+import { toggleServerLiveStatus } from "@/actions/live";
 import toast from "react-hot-toast";
 
 export default function Dashboard({ profile }: { profile: any }) {
@@ -21,6 +22,44 @@ export default function Dashboard({ profile }: { profile: any }) {
   const [editingPost, setEditingPost] = useState<any>(null);
   const [stats, setStats] = useState<{ recentPostsCount: number; totalNearbyCount: number } | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [isLive, setIsLive] = useState(Boolean(profile.isLive));
+  const [togglingLive, setTogglingLive] = useState(false);
+
+  const handleToggleLive = async () => {
+    setTogglingLive(true);
+    let coords: { latitude: number; longitude: number } | undefined;
+
+    if (typeof navigator !== "undefined" && "geolocation" in navigator) {
+      try {
+        const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 5000,
+          });
+        });
+        coords = {
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+        };
+      } catch (e) {
+        console.warn("Could not get position for live toggle:", e);
+      }
+    }
+
+    try {
+      const res = await toggleServerLiveStatus(coords);
+      setIsLive(res.isLive);
+      if (res.isLive) {
+        toast.success("You are now Live! Restaurants nearby can see you.", { icon: "🟢" });
+      } else {
+        toast("You are no longer Live.");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update live status");
+    } finally {
+      setTogglingLive(false);
+    }
+  };
 
   const handleDeletePost = (postId: string) => {
     toast((t) => (
@@ -108,6 +147,35 @@ export default function Dashboard({ profile }: { profile: any }) {
             >
               {isServer ? "Post to the Server Feed" : "Post Available Opportunities"}
             </button>
+
+            {isServer ? (
+              <button
+                onClick={handleToggleLive}
+                disabled={togglingLive}
+                className="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-bold shadow-md transition-transform hover:scale-105 w-full sm:w-auto flex items-center justify-center gap-2"
+              >
+                {togglingLive ? (
+                  "Updating..."
+                ) : isLive ? (
+                  <>
+                    <span className="relative flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+                    </span>
+                    Live (Go Offline)
+                  </>
+                ) : (
+                  "Go Live"
+                )}
+              </button>
+            ) : (
+              <Link
+                href="/available-servers"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-bold shadow-md transition-transform hover:scale-105 w-full sm:w-auto text-center flex items-center justify-center gap-2"
+              >
+                Go Live
+              </Link>
+            )}
           </div>
 
           <button 

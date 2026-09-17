@@ -22,6 +22,8 @@ model Profile {
   email          String?
   avatarUrl        String?
   serverExperience String?
+  isLive           Boolean     @default(false)
+  lastLiveAt       DateTime?
   restaurantName   String?
   streetAddress  String?
   city           String?
