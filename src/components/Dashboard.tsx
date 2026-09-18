@@ -20,7 +20,10 @@ export default function Dashboard({ profile }: { profile: any }) {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<any>(null);
-  const [stats, setStats] = useState<{ recentPostsCount: number; totalNearbyCount: number } | null>(null);
+  const [stats, setStats] = useState<{
+    recentPostsCount: number;
+    totalNearbyCount: number;
+  } | null>(null);
   const [isPending, startTransition] = useTransition();
   const [isLive, setIsLive] = useState(Boolean(profile.isLive));
   const [togglingLive, setTogglingLive] = useState(false);
@@ -31,12 +34,14 @@ export default function Dashboard({ profile }: { profile: any }) {
 
     if (typeof navigator !== "undefined" && "geolocation" in navigator) {
       try {
-        const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, {
-            enableHighAccuracy: true,
-            timeout: 5000,
-          });
-        });
+        const pos = await new Promise<GeolocationPosition>(
+          (resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              enableHighAccuracy: true,
+              timeout: 5000,
+            });
+          }
+        );
         coords = {
           latitude: pos.coords.latitude,
           longitude: pos.coords.longitude,
@@ -50,7 +55,9 @@ export default function Dashboard({ profile }: { profile: any }) {
       const res = await toggleServerLiveStatus(coords);
       setIsLive(res.isLive);
       if (res.isLive) {
-        toast.success("You are now Live! Restaurants nearby can see you.", { icon: "🟢" });
+        toast.success("You are now Live! Restaurants nearby can see you.", {
+          icon: "🟢",
+        });
       } else {
         toast("You are no longer Live.");
       }
@@ -62,53 +69,72 @@ export default function Dashboard({ profile }: { profile: any }) {
   };
 
   const handleDeletePost = (postId: string) => {
-    toast((t) => (
-      <div>
-        <p className="mb-3 font-medium">Are you sure you want to delete this post?</p>
-        <div className="flex justify-end gap-2">
-          <button 
-            onClick={() => toast.dismiss(t.id)}
-            className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
-          >
-            Cancel
-          </button>
-          <button 
-            onClick={() => {
-              toast.dismiss(t.id);
-              startTransition(async () => {
-                try {
-                  const res = await fetch(`/api/posts/${postId}`, { method: "DELETE" });
-                  if (!res.ok) throw new Error(await res.text());
-                  
-                  toast.success("Post deleted successfully");
-                  // refresh the page
-                  window.location.reload();
-                } catch (error) {
-                  console.error("Failed to delete post:", error);
-                  toast.error("Failed to delete post.");
-                }
-              });
-            }}
-            className="px-3 py-1.5 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
-          >
-            Delete
-          </button>
+    toast(
+      (t) => (
+        <div>
+          <p className="mb-3 font-medium">
+            Are you sure you want to delete this post?
+          </p>
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                toast.dismiss(t.id);
+                startTransition(async () => {
+                  try {
+                    const res = await fetch(`/api/posts/${postId}`, {
+                      method: "DELETE",
+                    });
+                    if (!res.ok) throw new Error(await res.text());
+
+                    toast.success("Post deleted successfully");
+                    // refresh the page
+                    window.location.reload();
+                  } catch (error) {
+                    console.error("Failed to delete post:", error);
+                    toast.error("Failed to delete post.");
+                  }
+                });
+              }}
+              className="px-3 py-1.5 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
+            >
+              Delete
+            </button>
+          </div>
         </div>
-      </div>
-    ), {
-      duration: Infinity,
-    });
+      ),
+      {
+        duration: Infinity,
+      }
+    );
   };
 
   useEffect(() => {
     if (!isServer && profile.latitude && profile.longitude) {
-      getDashboardStats(profile.latitude, profile.longitude, profile.accountType).then(res => {
+      getDashboardStats(
+        profile.latitude,
+        profile.longitude,
+        profile.accountType
+      ).then((res) => {
         if (res) setStats(res);
       });
     }
-    if (isServer && typeof navigator !== "undefined" && "geolocation" in navigator) {
+    if (
+      isServer &&
+      typeof navigator !== "undefined" &&
+      "geolocation" in navigator
+    ) {
       navigator.geolocation.getCurrentPosition((pos) => {
-        getDashboardStats(pos.coords.latitude, pos.coords.longitude, profile.accountType).then(res => {
+        getDashboardStats(
+          pos.coords.latitude,
+          pos.coords.longitude,
+          profile.accountType
+        ).then((res) => {
           if (res) setStats(res);
         });
       });
@@ -130,22 +156,24 @@ export default function Dashboard({ profile }: { profile: any }) {
       </nav>
 
       <main className="flex-grow p-6 lg:p-12 max-w-7xl mx-auto w-full space-y-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Dashboard</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          Dashboard
+        </h1>
         {/* Header Action Buttons */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-200 dark:border-gray-800 pb-6">
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <Link 
+            <Link
               href={isServer ? "/restaurant-feed" : "/feed"}
               className="bg-brand-500 hover:bg-brand-600 text-white px-6 py-3 rounded-lg font-bold shadow-md transition-transform hover:scale-105 w-full sm:w-auto text-center"
             >
-              {isServer ? "View Available Gigs" : "View Available Servers"}
+              {isServer ? "View  Gigs" : "View Servers"}
             </Link>
-            
-            <button 
+
+            <button
               onClick={() => setIsPostModalOpen(true)}
               className="bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-gray-900 px-6 py-3 rounded-lg font-bold shadow-md transition-transform hover:scale-105 w-full sm:w-auto"
             >
-              {isServer ? "Post to the Server Feed" : "Post Available Opportunities"}
+              {isServer ? "Post to the Server Feed" : "Post Opportunities"}
             </button>
 
             {isServer ? (
@@ -178,7 +206,7 @@ export default function Dashboard({ profile }: { profile: any }) {
             )}
           </div>
 
-          <button 
+          <button
             onClick={() => setIsUpdateModalOpen(true)}
             className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white px-6 py-3 rounded-lg font-bold shadow-sm transition-transform hover:scale-105 w-full sm:w-auto"
           >
@@ -194,21 +222,31 @@ export default function Dashboard({ profile }: { profile: any }) {
                 Direct Messages
               </h2>
               <div className="p-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl text-center flex flex-col items-center justify-center">
-                <p className="text-gray-500 dark:text-gray-400 font-medium mb-2">Unread Messages</p>
-                
+                <p className="text-gray-500 dark:text-gray-400 font-medium mb-2">
+                  Unread Messages
+                </p>
+
                 {unreadCount > 0 ? (
                   <>
                     <span className="bg-red-500 text-white font-bold px-4 py-1.5 rounded-full text-lg shadow-sm">
                       {unreadCount}
                     </span>
-                    <Link href="/messages" className="mt-4 text-brand-500 hover:text-brand-600 font-bold transition-colors">
+                    <Link
+                      href="/messages"
+                      className="mt-4 text-brand-500 hover:text-brand-600 font-bold transition-colors"
+                    >
                       Open Inbox &rarr;
                     </Link>
                   </>
                 ) : (
                   <>
-                    <p className="text-sm text-gray-400">You are all caught up!</p>
-                    <Link href="/messages" className="mt-4 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium transition-colors text-sm">
+                    <p className="text-sm text-gray-400">
+                      You are all caught up!
+                    </p>
+                    <Link
+                      href="/messages"
+                      className="mt-4 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium transition-colors text-sm"
+                    >
                       View Inbox
                     </Link>
                   </>
@@ -224,33 +262,67 @@ export default function Dashboard({ profile }: { profile: any }) {
               <div className="space-y-4">
                 <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-start gap-4 border border-blue-100 dark:border-blue-800/50">
                   <div className="bg-blue-500 text-white p-2 rounded-full mt-0.5 shadow-sm">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                      ></path>
+                    </svg>
                   </div>
                   <div>
                     <h3 className="font-bold text-gray-900 dark:text-white text-sm">
                       {isServer ? "New Restaurant Posts" : "New Server Posts"}
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300 text-xs mt-1 leading-relaxed">
-                      {stats ? `${stats.recentPostsCount} new posts in your area in the last 48 hours.` : "Checking location..."}
+                      {stats
+                        ? `${stats.recentPostsCount} new posts in your area in the last 48 hours.`
+                        : "Checking location..."}
                     </p>
                   </div>
                 </div>
 
                 <div className="p-4 bg-brand-50 dark:bg-brand-900/20 rounded-xl flex items-start gap-4 border border-brand-100 dark:border-brand-800/50">
                   <div className="bg-brand-500 text-white p-2 rounded-full mt-0.5 shadow-sm">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                      ></path>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                      ></path>
+                    </svg>
                   </div>
                   <div>
                     <h3 className="font-bold text-gray-900 dark:text-white text-sm">
                       {isServer ? "Gigs Near You" : "Servers Near You"}
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300 text-xs mt-1 leading-relaxed">
-                      {stats ? `${stats.totalNearbyCount} total active posts within 45 miles.` : "Checking location..."}
+                      {stats
+                        ? `${stats.totalNearbyCount} total active posts within 45 miles.`
+                        : "Checking location..."}
                     </p>
                   </div>
                 </div>
 
-                <Link 
+                <Link
                   href={isServer ? "/restaurant-feed" : "/feed"}
                   className="block text-center mt-2 text-brand-500 hover:text-brand-600 font-bold text-sm transition-colors"
                 >
@@ -265,37 +337,77 @@ export default function Dashboard({ profile }: { profile: any }) {
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 border-b border-gray-100 dark:border-gray-800 pb-3">
               Your Current Posts
             </h2>
-            
+
             {profile.posts && profile.posts.length > 0 ? (
               <div className="space-y-6">
                 {profile.posts.map((post: any) => (
-                  <div key={post.id} className="relative border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-gray-900">
+                  <div
+                    key={post.id}
+                    className="relative border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-gray-900"
+                  >
                     <div className="absolute top-4 right-4 z-10 flex gap-2">
-                      <button 
+                      <button
                         onClick={() => setEditingPost(post)}
                         disabled={isPending}
                         className="p-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm hover:bg-blue-50 dark:hover:bg-blue-900/30 text-gray-500 hover:text-blue-500 rounded-full transition-colors shadow-sm"
                         aria-label="Edit post"
                       >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                          />
+                        </svg>
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleDeletePost(post.id)}
                         disabled={isPending}
                         className="p-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-500 hover:text-red-500 rounded-full transition-colors shadow-sm"
                         aria-label="Delete post"
                       >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
                       </button>
                     </div>
                     {post.imageUrl && (
                       <div className="w-full aspect-video sm:aspect-[4/3] bg-gray-100 dark:bg-gray-800 relative">
-                        <img src={post.imageUrl} alt="Post image" className="absolute inset-0 w-full h-full object-cover" />
+                        <img
+                          src={post.imageUrl}
+                          alt="Post image"
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
                       </div>
                     )}
                     <div className="p-5">
                       <div className="flex items-center gap-3 mb-4">
-                        <img src={profile.avatarUrl || `https://ui-avatars.com/api/?name=${profile.username || 'U'}`} alt="Avatar" className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-700" />
+                        <img
+                          src={
+                            profile.avatarUrl ||
+                            `https://ui-avatars.com/api/?name=${
+                              profile.username || "U"
+                            }`
+                          }
+                          alt="Avatar"
+                          className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-700"
+                        />
                         <div>
                           <span className="font-bold text-gray-900 dark:text-white block leading-tight">
                             {profile.username}
@@ -307,12 +419,20 @@ export default function Dashboard({ profile }: { profile: any }) {
                       </div>
                       <div className="space-y-3 bg-gray-50 dark:bg-gray-800/30 p-4 rounded-lg">
                         <div>
-                          <h4 className="text-xs font-bold uppercase tracking-widest text-brand-500 mb-1">Looking for</h4>
-                          <p className="text-gray-800 dark:text-gray-200 text-sm whitespace-pre-wrap leading-relaxed">{post.gigsDescription}</p>
+                          <h4 className="text-xs font-bold uppercase tracking-widest text-brand-500 mb-1">
+                            Looking for
+                          </h4>
+                          <p className="text-gray-800 dark:text-gray-200 text-sm whitespace-pre-wrap leading-relaxed">
+                            {post.gigsDescription}
+                          </p>
                         </div>
                         <div className="pt-2 border-t border-gray-200 dark:border-gray-700/50">
-                          <h4 className="text-xs font-bold uppercase tracking-widest text-brand-500 mb-1">Server Experience</h4>
-                          <p className="text-gray-800 dark:text-gray-200 text-sm whitespace-pre-wrap leading-relaxed">{post.experienceDescription}</p>
+                          <h4 className="text-xs font-bold uppercase tracking-widest text-brand-500 mb-1">
+                            Server Experience
+                          </h4>
+                          <p className="text-gray-800 dark:text-gray-200 text-sm whitespace-pre-wrap leading-relaxed">
+                            {post.experienceDescription}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -322,11 +442,11 @@ export default function Dashboard({ profile }: { profile: any }) {
             ) : (
               <div className="p-12 bg-gray-50 dark:bg-gray-800/50 rounded-xl text-center">
                 <p className="text-gray-500 dark:text-gray-400 mb-3">
-                  {isServer 
-                    ? "You haven't posted your availability yet." 
+                  {isServer
+                    ? "You haven't posted your availability yet."
                     : "You haven't posted any open shifts yet."}
                 </p>
-                <button 
+                <button
                   onClick={() => setIsPostModalOpen(true)}
                   className="text-brand-500 font-bold hover:underline transition-colors"
                 >
